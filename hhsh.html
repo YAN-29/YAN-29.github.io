@@ -3,25 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>每日健康打卡</title>
-  
+  <title>好好生活 - 每日健康打卡</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-
   <style>
-    :root {
-      /* 温馨自然色调 */
-      --bg: #FFF8F0;
-      --card: #FFFFFF;
-      --text: #5D4037;
-      --light-gray: #F5E6D3;
-      
-      /* 统一选中颜色 */
-      --selected-color: #FF6B9D;
-    }
-
     * {
       margin: 0;
       padding: 0;
@@ -30,48 +16,170 @@
 
     body {
       font-family: 'Noto Sans SC', sans-serif;
-      background: linear-gradient(135deg, #FFF8F0 0%, #FCE8D8 30%, #E8F5E9 70%, #FFF9C4 100%);
-      color: var(--text);
+      background: #f9f7f2;
+      color: #333;
       line-height: 1.6;
-      min-height: 100vh;
-      padding: 20px 0;
+      padding: 20px;
     }
 
     .container {
-      max-width: 1000px;
+      max-width: 800px;
       margin: 0 auto;
-      padding: 0 20px;
     }
 
-    /* 页面切换标签 */
-    .page-tabs {
+    h1 {
+      text-align: center;
+      font-size: 1.8rem;
+      margin: 20px 0 10px;
+      color: #5a5a5a;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #888;
+      margin-bottom: 20px;
+      font-size: 0.95rem;
       display: flex;
-      background: var(--card);
+      justify-content: center;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .subtitle-text {
+      margin-right: 6px; /* 与图标保持间距 */
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .subtitle-text.visible {
+      opacity: 1;
+    }
+
+    .mars {
+      font-size: 1.2rem;
+      cursor: pointer;
+      color: #bbb;
+      transition: color 0.3s, text-shadow 0.3s;
+    }
+
+    .mars.lit {
+      color: #e91e63;
+      text-shadow: 0 0 8px rgba(233, 30, 99, 0.5);
+    }
+
+    .tip {
+      background: #e8f5e9;
+      padding: 14px;
+      border-radius: 12px;
+      margin: 20px auto;
+      max-width: 600px;
+      font-size: 0.95rem;
+      color: #2e7d32;
+      text-align: center;
+      border-left: 3px solid #4caf50;
+      display: none; /* 隐藏提示框 */
+    }
+
+    .section {
+      background: white;
       border-radius: 16px;
-      margin: 0 20px 20px;
+      padding: 20px;
+      margin-bottom: 24px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    .section-title {
+      font-size: 1.2rem;
+      margin-bottom: 16px;
+      color: #444;
+    }
+
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr); /* 强制 5 列 */
+      gap: 12px;
+    }
+
+    .option-card {
+      border: 2px solid #eee;
+      border-radius: 12px;
       overflow: hidden;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+    }
+
+    .option-card:hover {
+      border-color: #bbdefb;
+    }
+
+    .option-card.selected {
+      border-color: #2196f3;
+      background-color: #e3f2fd;
+    }
+
+    .option-img {
+      width: 100%;
+      height: 80px;
+      object-fit: cover;
+      background: #f5f5f5;
+    }
+
+    .option-label {
+      padding: 8px 4px;
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+
+    .option-desc {
+      font-size: 0.8rem;
+      color: #757575;
+      padding: 0 4px 8px;
+    }
+
+    .tabs {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin: 20px 0;
     }
 
     .tab-btn {
-      flex: 1;
-      padding: 16px;
-      background: transparent;
+      padding: 8px 16px;
+      background: #eee;
       border: none;
-      font-size: 1.1rem;
-      font-weight: 500;
-      color: #7f8c8d;
+      border-radius: 20px;
       cursor: pointer;
-      transition: all 0.3s ease;
+      font-size: 0.9rem;
     }
 
     .tab-btn.active {
-      background: linear-gradient(135deg, #FFB3BA, #BAFFC9);
+      background: #2196f3;
       color: white;
     }
 
-    .tab-btn:hover:not(.active) {
-      background: #f8f9fa;
+    .stat-item {
+      padding: 12px 0;
+      border-bottom: 1px dashed #eee;
+      display: flex;
+      justify-content: space-between;
+      align-items: center; /* 使内容垂直居中 */
+    }
+
+    .stat-item.counts { /* 用于次数统计的样式 */
+      justify-content: space-between;
+    }
+
+    .stat-trend { /* 趋势图标样式 */
+      font-size: 1.1rem;
+      margin-left: 8px;
+    }
+
+    .no-data {
+      text-align: center;
+      color: #999;
+      padding: 20px;
+      font-style: italic;
     }
 
     .page {
@@ -80,452 +188,315 @@
 
     .page.active {
       display: block;
-      animation: fadeIn 0.5s ease;
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* 卡片通用样式 */
-    .card {
-      background: var(--card);
-      border-radius: 20px;
-      padding: 24px;
-      margin-bottom: 24px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-      transition: transform 0.3s ease;
-      border: 1px solid rgba(255,187,187,0.2);
-    }
-
-    .card:hover {
-      transform: translateY(-3px);
-    }
-
-    .card-title {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      cursor: pointer;
-      user-select: none;
-      margin-bottom: 16px;
-    }
-
-    .card-icon {
-      width: 52px;
-      height: 52px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.3rem;
-      color: white;
-      flex-shrink: 0;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-
-    .sleep-icon { background: linear-gradient(135deg, #FFD1DC, #FF9AA2); }
-    .food-icon { background: linear-gradient(135deg, #B5EAD7, #C7F4C2); }
-    .activity-icon { background: linear-gradient(135deg, #FFDAC1, #F9DEC9); }
-    .body-icon { background: linear-gradient(135deg, #D7B3FF, #E0BBE4); color: var(--text); }
-
-    .card h2 {
-      font-size: 1.5rem;
-      font-weight: 600;
-      color: var(--text);
-    }
-
-    /* 打卡选项按钮 */
-    .btn-group {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 14px;
-      margin-bottom: 16px;
-    }
-
-    .option-btn {
-      background: var(--light-gray);
-      border: none;
-      border-radius: 16px;
-      padding: 18px 12px;
-      font-size: 1rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.3s ease;
+    .nav-buttons {
       text-align: center;
-      color: var(--text);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .option-btn:hover {
-      background: #e8d9c7;
-      transform: translateY(-2px);
-    }
-
-    /* 统一选中状态颜色 */
-    .option-btn.selected {
-      background: var(--selected-color);
-      color: white;
-    }
-
-    .tip-box {
-      background: linear-gradient(135deg, #FFECB3, #FFE0B2);
-      border-radius: 16px;
-      padding: 18px;
       margin-top: 20px;
-      color: #5D4037;
-      text-align: center;
-      font-weight: 500;
-      font-size: 1rem;
-      border-left: 4px solid #FFD54F;
     }
 
-    /* 统计页面 */
-    .time-selector {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-
-    .time-btn {
-      padding: 10px 18px;
-      background: var(--light-gray);
+    .nav-buttons button {
+      padding: 10px 20px;
+      margin: 0 8px;
+      background: #2196f3;
+      color: white;
       border: none;
-      border-radius: 24px;
-      font-size: 1rem;
+      border-radius: 20px;
       cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .time-btn.active {
-      background: linear-gradient(135deg, #FFB3BA, #BAFFC9);
-      color: white;
-    }
-
-    .stat-section {
-      margin-bottom: 30px;
-    }
-
-    .stat-section h3 {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 18px;
-      font-size: 1.3rem;
-      color: var(--text);
-      padding-bottom: 8px;
-      border-bottom: 2px solid #F5E6D3;
-    }
-
-    .stat-item {
-      display: flex;
-      align-items: center;
-      padding: 14px 18px;
-      background: #fafafa;
-      border-radius: 14px;
-      margin-bottom: 12px;
       font-size: 1rem;
-      transition: all 0.2s;
     }
 
-    .stat-item:hover {
-      transform: translateX(4px);
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    }
-
-    .stat-badge {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-right: 14px;
-      font-size: 0.9rem;
-      font-weight: bold;
-      color: white;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-    }
-
-    .no-data {
-      text-align: center;
-      color: #95a5a6;
-      padding: 30px;
-      font-style: italic;
-      background: #f9f9f9;
-      border-radius: 16px;
-    }
-
-    @media (max-width: 600px) {
-      .btn-group { grid-template-columns: 1fr; }
-      .card { padding: 20px; }
-      .time-selector { flex-wrap: wrap; }
-      .option-btn { padding: 16px; }
+    .nav-buttons button.secondary {
+      background: #9e9e9e;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <!-- 页面切换 -->
-    <div class="page-tabs">
-      <button class="tab-btn active" onclick="switchPage('main')">打卡</button>
-      <button class="tab-btn" onclick="switchPage('stats')">统计</button>
-    </div>
+    <h1>好好生活</h1>
+    <p class="subtitle">
+      <span id="subtitle-text" class="subtitle-text">一起活着</span>
+      <span id="mars-icon" class="mars">🌕</span>
+    </p>
+
+    <!-- <div class="tip"> -->
+    <!-- "吃饭的时候专注感受每一口的味道，细嚼慢咽不仅有助于消化，还能让我们更好地享受美食带来的快乐。" -->
+    <!-- </div> -->
 
     <!-- 打卡页 -->
     <div id="main-page" class="page active">
       <!-- 睡眠 -->
-      <div class="card">
-        <div class="card-title" onclick="toggleOptions('sleep')">
-          <div class="card-icon sleep-icon"><i class="fas fa-bed"></i></div>
-          <h2>昨晚睡得好吗？</h2>
-        </div>
-        <div id="sleep-options" class="options" style="display:none;">
-          <div class="btn-group">
-            <button class="option-btn" data-value="睡得很好">
-              <span>睡得很好</span>
-            </button>
-            <button class="option-btn" data-value="失眠了">
-              <span>失眠了</span>
-            </button>
-            <button class="option-btn" data-value="早醒了">
-              <span>早醒了</span>
-            </button>
-            <button class="option-btn" data-value="中途醒了">
-              <span>中途醒了</span>
-            </button>
-            <button class="option-btn" data-value="做噩梦了">
-              <span>做噩梦了</span>
-            </button>
+      <div class="section">
+        <div class="section-title">昨晚睡得好吗？<br><small style="font-size:0.8rem;color:#757575;">良好的睡眠是健康的基石</small></div>
+        <div class="options-grid" data-category="sleep">
+          <div class="option-card" data-value="睡得很好">
+            <img class="option-img" src="https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cDovL3ZlZXIwNS5jZnAuY24vY3JlYXRpdmUvdmNnL3ZlZXIvMTYwMHdhdGVyL3ZlZXItMzM2MjEzMzQxLmpwZw==&sign=yx:MAC0rKpUOp1XPtFBoo_HTaO7_zE=&tv=400_400" alt="睡得很好">
+            <div class="option-label">睡得很好</div>
+            <div class="option-desc">一觉到天亮</div>
           </div>
-          <div class="tip-box">🌙 睡前放下手机，让心安静下来～</div>
+          <div class="option-card" data-value="失眠了">
+            <img class="option-img" src="https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cDovL3Bob3RvLXN0YXRpYy1hcGkuZm90b21vcmUuY29tL2NyZWF0aXZlL3ZjZy92ZWVyL25vd2FydGVyODAwL25ldy9WQ0c0MU40NzA3MTIxMDIuanBn&sign=yx:0uNX5tX1D8cToT9vbIlulQyuioI=&tv=400_400" alt="失眠了">
+            <div class="option-label">失眠了</div>
+            <div class="option-desc">难以入眠</div>
+          </div>
+          <div class="option-card" data-value="早醒了">
+            <img class="option-img" src="https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly9pbWcuZG9uZ2xpcGluLmNvbS9waWNmaWxlcy9wLzEwNC8xMDQ3MjEvMTY4NzMzMzMwNTkxODQyNy5qcGc=&sign=yx:aQdbadIJ5z0vgm4oc-CLRh2mPec=&tv=400_400" alt="早醒了">
+            <div class="option-label">早醒了</div>
+            <div class="option-desc">醒得过早</div>
+          </div>
+          <div class="option-card" data-value="中途醒了">
+            <img class="option-img" src="https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cDovL3RlbmZlaTAxLmNmcC5jbi9jcmVhdGl2ZS92Y2cvdmVlci8xNjAwd2F0ZXIvdmVlci0zOTk5NjI5ODUuanBn&sign=yx:a2Gcn5I3WVQXDLg4U85Xu-DRkGo=&tv=400_400" alt="中途醒了">
+            <div class="option-label">中途醒了</div>
+            <div class="option-desc">多次醒来</div>
+          </div>
+          <div class="option-card" data-value="深睡少">
+         <div class="option-img" style="background:#e0f7fa;display:flex;align-items:center;justify-content:center;color:#0097a7;font-weight:bold;">🌙</div>
+  <div class="option-label">深睡少</div>
+  <div class="option-desc">浅睡为主</div>
+</div>
+          <div class="option-card" data-value="做噩梦了">
+            <img class="option-img" src="https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cDovL3RlbmZlaTA1LmNmcC5jbi9jcmVhdGl2ZS92Y2cvdmVlci8xNjAwd2F0ZXIvdmVlci0zNjgxNTMzNTkuanBn&sign=yx:1-uxbs15OKy54Ew5tfQu--NmOk4=&tv=400_400" alt="做噩梦了">
+            <div class="option-label">做噩梦了</div>
+            <div class="option-desc">梦境困扰</div>
+          </div>
         </div>
       </div>
 
       <!-- 饮食 -->
-      <div class="card">
-        <div class="card-title" onclick="toggleOptions('food')">
-          <div class="card-icon food-icon"><i class="fas fa-utensils"></i></div>
-          <h2>今天吃饭怎么样？</h2>
-        </div>
-        <div id="food-options" class="options" style="display:none;">
-          <div class="btn-group">
-            <button class="option-btn" data-value="吃得正好">
-              <span>吃得正好</span>
-            </button>
-            <button class="option-btn" data-value="没按时吃">
-              <span>没按时吃</span>
-            </button>
-            <button class="option-btn" data-value="没吃饱">
-              <span>没吃饱</span>
-            </button>
-            <button class="option-btn" data-value="吃撑了">
-              <span>吃撑了</span>
-            </button>
-            <button class="option-btn" data-value="生冷油腻">
-              <span>生冷油腻</span>
-            </button>
+      <div class="section">
+        <div class="section-title">今天吃饭怎么样？<br><small style="font-size:0.8rem;color:#757575;">合理的饮食是健康的保障</small></div>
+        <div class="options-grid" data-category="food">
+          <div class="option-card" data-value="吃得正好">
+            <img class="option-img" src="https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly9pbWcwOC50b29vcGVuLmNvbS8yMDIxMDkwMS90b29vcGVuX3YxNjIxNTUyMTU1Y2Q5ZWVhOTMtNDBmMS00NzA3LWE4YzQtMzJjYTNiMWNkOTA5LmpwZw==&sign=yx:G82XrrnLdOMsvQ5VpOlH66CtKbA=&tv=400_400" alt="吃得正好">
+            <div class="option-label">吃得正好</div>
+            <div class="option-desc">营养均衡</div>
           </div>
-          <div class="tip-box">🥗 细嚼慢咽，感受食物的温度与味道。</div>
+          <div class="option-card" data-value="没按时吃">
+            <img class="option-img" src="https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cDovL2ltYWdlMTA5LjM2MGRvYy5jb20vRG93bmxvYWRJbWcvMjAyMC8xMC8zMDA5LzIwNTkzNDA3OV8xXzIwMjAxMDMwMDk1OTI5NjE4X3dt&sign=yx:p5HD8J6ddnLaYnttDo07-ToIeAI=&tv=400_400" alt="没按时吃">
+            <div class="option-label">没按时吃</div>
+            <div class="option-desc">作息不规律</div>
+          </div>
+          <div class="option-card" data-value="没吃饱">
+            <img class="option-img" src="https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cDovL2ltZzk1LjY5OXBpYy5jb20veHNqLzBiL3Y5L28xLmpwZyEvZncvNzAwL3dhdGVybWFyay91cmwvTDNoemFpOTNZWFJsY2w5a1pYUmhhV3d5TG5CdVp3L2FsaWduL3NvdXRoZWFzdA==&sign=yx:8yDsay1bqgXQOq515FCxSwtYaf8=&tv=400_400" alt="没吃饱">
+            <div class="option-label">没吃饱</div>
+            <div class="option-desc">营养不足</div>
+          </div>
+          <div class="option-card" data-value="吃撑了">
+            <img class="option-img" src="https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly93eDIuc2luYWltZy5jbi9sYXJnZS8wMDV6MmJER2d5MWhuazZmem5ycWlqMzJjMDJjMGU4My5qcGc=&sign=yx:zsDYoDOm9IQIFn_nRO9BWb3g8Fo=&tv=400_400" alt="吃撑了">
+            <div class="option-label">吃撑了</div>
+            <div class="option-desc">过量进食</div>
+          </div>
+          <div class="option-card" data-value="生冷油腻">
+            <img class="option-img" src="https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cDovL2FsaWZlaTA1LmNmcC5jbi9jcmVhdGl2ZS92Y2cvdmVlci8xNjAwd2F0ZXIvdmVlci0zNzc0OTIyODQuanBn&sign=yx:lU1113TFD-X11lQT1BgPtEwipH8=&tv=400_400" alt="生冷油腻">
+            <div class="option-label">生冷油腻</div>
+            <div class="option-desc">不健康选择</div>
+          </div>
         </div>
       </div>
 
       <!-- 活动 -->
-      <div class="card">
-        <div class="card-title" onclick="toggleOptions('activity')">
-          <div class="card-icon activity-icon"><i class="fas fa-running"></i></div>
-          <h2>今天活动够了吗？</h2>
-        </div>
-        <div id="activity-options" class="options" style="display:none;">
-          <div class="btn-group">
-            <button class="option-btn" data-value="运动了">
-              <span>运动了</span>
-            </button>
-            <button class="option-btn" data-value="散步了">
-              <span>散步了</span>
-            </button>
-            <button class="option-btn" data-value="拉伸了">
-              <span>拉伸了</span>
-            </button>
-            <button class="option-btn" data-value="轻度活动">
-              <span>轻度活动</span>
-            </button>
-            <button class="option-btn" data-value="需要休息">
-              <span>需要休息</span>
-            </button>
+      <div class="section">
+        <div class="section-title">今天活动够了吗？<br><small style="font-size:0.8rem;color:#757575;">适量运动让身体更健康</small></div>
+        <div class="options-grid" data-category="activity">
+          <div class="option-card" data-value="运动了">
+            <img class="option-img" src="https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cDovL2ltZy5hbGljZG4uY29tL2Jhby91cGxvYWRlZC9pMi8xNzgyMjcwMDcvTzFDTjAxMHZzSlF1MjFkR0VieUJBMnJfISExNzgyMjcwMDcuanBn&sign=yx:J4a-_9gwbZCzojLucpz1iiIbYtk=&tv=400_400" alt="运动了">
+            <div class="option-label">运动了</div>
+            <div class="option-desc">专业锻炼</div>
           </div>
-          <div class="tip-box">🚶‍♀️ 哪怕只是站起来走两步，也是对自己的关爱。</div>
+          <div class="option-card" data-value="散步了">
+            <img class="option-img" src="https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly9wMC5zc2wucWhpbWdzMS5jb20vdDAxYjM3MGRiMTRhYmM3Y2RlNC5qcGc=&sign=yx:4CM3rBDFI5LQBtkMvnbDvBcbQRI=&tv=400_400" alt="散步了">
+            <div class="option-label">散步了</div>
+            <div class="option-desc">轻松步行</div>
+          </div>
+<div class="option-card" data-value="晒太阳">
+  <div class="option-img" style="background:#fff8e1;display:flex;align-items:center;justify-content:center;color:#ff9800;font-weight:bold;">☀️</div>
+  <div class="option-label">晒太阳</div>
+  <div class="option-desc">补充维生素D</div>
+</div>
+          <div class="option-card" data-value="拉伸了">
+            <img class="option-img" src="https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly90Ny5iYWlkdS5jb20vaXQvdT0yNjE0NDkyMDAxLDQwMjUzODE2NyZmbT0xOTM=&sign=yx:iPaUv4Afvis_3PQfezWb0OlaiyA=&tv=400_400" alt="拉伸了">
+            <div class="option-label">拉伸了</div>
+            <div class="option-desc">柔韧性训练</div>
+          </div>
+          <div class="option-card" data-value="轻度活动">
+            <img class="option-img" src="https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly9pbWcuemNvb2wuY24vY29tbXVuaXR5LzAxMjcyNDVkNDc4Y2YwYTgwMTIxODdmNDI0NWQyMC5qcGc_eC1vc3MtcHJvY2Vzcz1pbWFnZS9hdXRvLW9yaWVudCwxL3Jlc2l6ZSxtX2xmaXQsd18xMjgwLGxpbWl0XzEvc2hhcnBlbiwxMDAvcXVhbGl0eSxxXzEwMA==&sign=yx:Srl5Mr3wxG9fZq_MUMOlNCAjUNc=&tv=400_400" alt="轻度活动">
+            <div class="option-label">轻度活动</div>
+            <div class="option-desc">日常劳作</div>
+          </div>
+          <div class="option-card" data-value="需要休息">
+            <img class="option-img" src="https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cDovL2ltZzk1LjY5OXBpYy5jb20veHNqLzBhLzA0L2lpLmpwZyEvZncvNzAwL3dhdGVybWFyay91cmwvTDNoemFpOTNZWFJsY2w5a1pYUmhhV3d5TG5CdVp3L2FsaWduL3NvdXRoZWFzdA==&sign=yx:dZcoGlOqA_0ilsKdCfRrVeXQ9Yo=&tv=400_400" alt="需要休息">
+            <div class="option-label">需要休息</div>
+            <div class="option-desc">过度疲劳</div>
+          </div>
         </div>
       </div>
 
       <!-- 身体感受 -->
-      <div class="card">
-        <div class="card-title" onclick="toggleOptions('body')">
-          <div class="card-icon body-icon"><i class="fas fa-heartbeat"></i></div>
-          <h2>身体感觉如何？</h2>
-        </div>
-        <div id="body-options" class="options" style="display:none;">
-          <div class="btn-group">
-            <button class="option-btn" data-value="感觉不错！">
-              <span>感觉不错！</span>
-            </button>
-            <button class="option-btn" data-value="眼睛干涩">
-              <span>眼睛干涩</span>
-            </button>
-            <button class="option-btn" data-value="鼻塞不通">
-              <span>鼻塞不通</span>
-            </button>
-            <button class="option-btn" data-value="咳嗽不适">
-              <span>咳嗽不适</span>
-            </button>
-            <button class="option-btn" data-value="肩颈不适">
-              <span>肩颈不适</span>
-            </button>
-            <button class="option-btn" data-value="腰背酸痛">
-              <span>腰背酸痛</span>
-            </button>
-            <button class="option-btn" data-value="腿部沉重">
-              <span>腿部沉重</span>
-            </button>
-            <button class="option-btn" data-value="头痛头晕">
-              <span>头痛头晕</span>
-            </button>
-            <button class="option-btn" data-value="压力过大">
-              <span>压力过大</span>
-            </button>
+      <div class="section">
+        <div class="section-title">身体感觉如何？<br><small style="font-size:0.8rem;color:#757575;">关注身体每一个细微变化</small></div>
+        <div class="options-grid" data-category="body">
+          <div class="option-card" data-value="感觉不错！">
+            <div class="option-img" style="background:#e8f5e8;display:flex;align-items:center;justify-content:center;color:#4caf50;font-weight:bold;">😊</div>
+            <div class="option-label">感觉不错！</div>
+            <div class="option-desc">状态良好</div>
           </div>
-          <div class="tip-box">💝 身体在说话，请温柔倾听它。</div>
+          <div class="option-card" data-value="眼睛干涩">
+            <div class="option-img" style="background:#ffebee;display:flex;align-items:center;justify-content:center;color:#f44336;">👁️</div>
+            <div class="option-label">眼睛干涩</div>
+            <div class="option-desc">用眼过度</div>
+          </div>
+          <div class="option-card" data-value="鼻塞不通">
+            <div class="option-img" style="background:#e3f2fd;display:flex;align-items:center;justify-content:center;color:#2196f3;">👃</div>
+            <div class="option-label">鼻塞不通</div>
+            <div class="option-desc">可能感冒</div>
+          </div>
+          <div class="option-card" data-value="咳嗽不适">
+            <div class="option-img" style="background:#fff3e0;display:flex;align-items:center;justify-content:center;color:#ff9800;">🤧</div>
+            <div class="option-label">咳嗽不适</div>
+            <div class="option-desc">呼吸道敏感</div>
+          </div>
+          <div class="option-card" data-value="肩颈不适">
+            <div class="option-img" style="background:#f3e5f5;display:flex;align-items:center;justify-content:center;color:#9c27b0;">💆</div>
+            <div class="option-label">肩颈不适</div>
+            <div class="option-desc">久坐导致</div>
+          </div>
+          <div class="option-card" data-value="腰背酸痛">
+            <div class="option-img" style="background:#e1f5fe;display:flex;align-items:center;justify-content:center;color:#03a9f4;">🦴</div>
+            <div class="option-label">腰背酸痛</div>
+            <div class="option-desc">姿势不良</div>
+          </div>
+          <div class="option-card" data-value="腿部沉重">
+            <div class="option-img" style="background:#e8f5e8;display:flex;align-items:center;justify-content:center;color:#4caf50;">🦵</div>
+            <div class="option-label">腿部沉重</div>
+            <div class="option-desc">循环不畅</div>
+          </div>
+          <div class="option-card" data-value="头痛头晕">
+            <div class="option-img" style="background:#ffebee;display:flex;align-items:center;justify-content:center;color:#f44336;">🧠</div>
+            <div class="option-label">头痛头晕</div>
+            <div class="option-desc">压力或疲劳</div>
+          </div>
+          <div class="option-card" data-value="压力过大">
+            <div class="option-img" style="background:#fff8e1;display:flex;align-items:center;justify-content:center;color:#ff9800;">😰</div>
+            <div class="option-label">压力过大</div>
+            <div class="option-desc">情绪紧张</div>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- 统计页 -->
     <div id="stats-page" class="page">
-      <div class="card">
-        <div class="time-selector">
-          <button class="time-btn active" data-period="today">今天</button>
-          <button class="time-btn" data-period="yesterday">昨天</button>
-          <button class="time-btn" data-period="week">本周</button>
-          <button class="time-btn" data-period="month">本月</button>
-        </div>
-
-        <div id="stats-content"></div>
+      <div class="tabs">
+        <button class="tab-btn active" data-period="today">今天</button>
+        <button class="tab-btn" data-period="yesterday">昨天</button>
+        <button class="tab-btn" data-period="week">本周</button>
+        <button class="tab-btn" data-period="month">本月</button>
+        <button class="tab-btn" data-period="all">全部记录</button>
       </div>
+      <div id="stats-content"></div>
+    </div>
+
+    <div class="nav-buttons">
+      <button onclick="switchPage('main')">今日打卡</button>
+      <button class="secondary" onclick="switchPage('stats')">查看统计</button>
     </div>
   </div>
 
   <script>
-    // 分类配置（用于图标和颜色）
+    // --- 将函数定义移到此处 ---
     const categoryConfig = {
-      sleep: { icon: 'bed', title: '睡眠情况' },
-      food: { icon: 'utensils', title: '饮食情况' },
-      activity: { icon: 'running', title: '活动情况' },
-      body: { icon: 'heartbeat', title: '身体感受' }
+      sleep: { title: '睡眠情况' },
+      food: { title: '饮食情况' },
+      activity: { title: '活动情况' },
+      body: { title: '身体感受' }
     };
 
-    // 当前统计周期
     let currentPeriod = 'today';
 
     // 切换页面
     function switchPage(page) {
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
       document.getElementById(`${page}-page`).classList.add('active');
       if (page === 'stats') renderStats();
     }
 
-    // 切换选项
-    function toggleOptions(id) {
-      const el = document.getElementById(id + '-options');
-      el.style.display = el.style.display === 'block' ? 'none' : 'block';
-    }
-
-    // 记录打卡（多选）
-    document.querySelectorAll('.option-btn').forEach(btn => {
-      btn.addEventListener('click', function() {
-        const category = this.closest('.options').id.replace('-options', '');
-        const value = this.getAttribute('data-value');
+    // 多选逻辑
+    document.querySelectorAll('.option-card').forEach(card => {
+      card.addEventListener('click', function () {
+        this.classList.toggle('selected');
+        const category = this.closest('.options-grid').dataset.category;
         const today = new Date().toISOString().split('T')[0];
-        const key = `haohao_${category}_${today}`;
-        
-        // 获取当前已选（兼容旧格式）
-        let current = localStorage.getItem(key);
-        let selected = [];
-        
-        // 如果是旧格式（字符串），转换为数组
-        if (current) {
-          try {
-            selected = JSON.parse(current);
-            if (!Array.isArray(selected)) {
-              selected = [current]; // 旧格式是单个值
-            }
-          } catch (e) {
-            // 如果不是 JSON 格式，认为是旧格式字符串
-            selected = [current];
-          }
-        }
-        
-        // 切换选中状态
-        const index = selected.indexOf(value);
-        if (index > -1) {
-          // 取消选中
-          selected.splice(index, 1);
-          this.classList.remove('selected');
-        } else {
-          // 添加选中
-          selected.push(value);
-          this.classList.add('selected');
-        }
-        
-        // 保存到本地（统一用数组格式）
-        if (selected.length > 0) {
-          localStorage.setItem(key, JSON.stringify(selected));
-        } else {
-          localStorage.removeItem(key); // 没有选项时删除
-        }
-        
-        if (document.getElementById('stats-page').classList.contains('active')) {
-          renderStats();
-        }
+
+        const selectedValues = Array.from(
+          this.parentElement.querySelectorAll('.option-card.selected')
+        ).map(c => c.dataset.value);
+
+        localStorage.setItem(`haohao_${category}_${today}`, JSON.stringify(selectedValues));
       });
     });
 
-    // 加载今日已选（兼容旧格式）
+    // 火星图标与文字显示逻辑
+    const marsIcon = document.getElementById('mars-icon');
+    const subtitleText = document.getElementById('subtitle-text');
+
+    // 从 localStorage 加载月亮点亮和文字显示状态
+    const isMarsLit = localStorage.getItem('mars_lit') === 'true';
+    const isTextVisible = localStorage.getItem('subtitle_text_visible') === 'true';
+
+    if (isMarsLit) {
+      marsIcon.classList.add('lit');
+    }
+    if (isTextVisible) {
+      subtitleText.classList.add('visible');
+    }
+
+    marsIcon.addEventListener('click', () => {
+      const isCurrentlyLit = marsIcon.classList.contains('lit');
+      const isCurrentlyVisible = subtitleText.classList.contains('visible');
+
+      if (isCurrentlyLit && isCurrentlyVisible) {
+        // 如果当前点亮且文字可见，则熄灭并隐藏文字
+        marsIcon.classList.remove('lit');
+        subtitleText.classList.remove('visible');
+        localStorage.setItem('mars_lit', 'false');
+        localStorage.setItem('subtitle_text_visible', 'false');
+      } else {
+        // 否则，点亮并显示文字
+        marsIcon.classList.add('lit');
+        subtitleText.classList.add('visible');
+        localStorage.setItem('mars_lit', 'true');
+        localStorage.setItem('subtitle_text_visible', 'true');
+      }
+    });
+
+    // 加载今日已选（多选）
     window.onload = () => {
       const today = new Date().toISOString().split('T')[0];
       ['sleep', 'food', 'activity', 'body'].forEach(cat => {
         const saved = localStorage.getItem(`haohao_${cat}_${today}`);
         if (saved) {
-          let selected = [];
           try {
-            selected = JSON.parse(saved);
-            if (!Array.isArray(selected)) {
-              selected = [saved]; // 旧格式
+            const values = JSON.parse(saved);
+            if (Array.isArray(values)) {
+              values.forEach(val => {
+                const card = [...document.querySelectorAll(`[data-category="${cat}"] .option-card`)]
+                  .find(c => c.dataset.value === val);
+                if (card) card.classList.add('selected');
+              });
             }
           } catch (e) {
-            selected = [saved]; // 旧格式
+            console.warn('Failed to parse saved data for', cat, e);
           }
-          
-          selected.forEach(val => {
-            const btn = [...document.querySelectorAll(`#${cat}-options .option-btn`)]
-              .find(b => b.getAttribute('data-value') === val);
-            if (btn) btn.classList.add('selected');
-          });
         }
       });
     };
 
-    // 时间按钮切换
-    document.querySelectorAll('.time-btn').forEach(btn => {
+    // 时间切换
+    document.querySelectorAll('.tab-btn').forEach(btn => {
       btn.addEventListener('click', () => {
-        document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        currentPeriod = btn.getAttribute('data-period');
+        currentPeriod = btn.dataset.period;
         renderStats();
       });
     });
@@ -541,7 +512,7 @@
         yest.setDate(now.getDate() - 1);
         dates.push(formatDate(yest));
       } else if (period === 'week') {
-        for (let i = 0; i < 7; i++) {
+        for (let i = 6; i >= 0; i--) {
           const d = new Date(now);
           d.setDate(now.getDate() - i);
           dates.push(formatDate(d));
@@ -550,10 +521,13 @@
         const year = now.getFullYear();
         const month = now.getMonth();
         const daysInMonth = new Date(year, month + 1, 0).getDate();
-        for (let i = 0; i < daysInMonth && i < 31; i++) {
+        for (let i = Math.min(daysInMonth, 31) - 1; i >= 0; i--) {
           const d = new Date(year, month, now.getDate() - i);
           dates.push(formatDate(d));
         }
+      } else if (period === 'all') {
+        // 'all' 模式不使用此函数，返回空数组
+        return [];
       }
       return dates;
     }
@@ -562,59 +536,228 @@
       return date.toISOString().split('T')[0];
     }
 
-    // 渲染统计
+    // 渲染统计（支持多选和次数统计）
     function renderStats() {
-      const dates = getDateRange(currentPeriod);
       const container = document.getElementById('stats-content');
       container.innerHTML = '';
 
-      ['sleep', 'food', 'activity', 'body'].forEach(cat => {
-        // 统计每个选项出现次数
-        const counts = {};
-        dates.forEach(date => {
-          const val = localStorage.getItem(`haohao_${cat}_${date}`);
-          if (val) {
-            let selected = [];
+      if (currentPeriod === 'all') {
+        // 渲染次数统计
+        renderCountStats(container);
+      } else {
+        // 渲染按日期统计
+        renderDateStats(container);
+      }
+    }
+
+    function renderDateStats(container) {
+      const dates = getDateRange(currentPeriod);
+
+      dates.forEach(date => {
+        let hasData = false;
+        const dateSection = document.createElement('div');
+        dateSection.style.marginBottom = '20px';
+        const dateHeader = document.createElement('h3');
+        dateHeader.textContent = date;
+        dateHeader.style.marginBottom = '12px';
+        dateHeader.style.color = '#555';
+        dateSection.appendChild(dateHeader);
+
+        ['sleep', 'food', 'activity', 'body'].forEach(cat => {
+          const saved = localStorage.getItem(`haohao_${cat}_${date}`);
+          if (saved) {
             try {
-              selected = JSON.parse(val);
-              if (!Array.isArray(selected)) {
-                selected = [val]; // 旧格式
+              const values = JSON.parse(saved);
+              if (Array.isArray(values) && values.length > 0) {
+                hasData = true;
+                const item = document.createElement('div');
+                item.className = 'stat-item';
+                item.innerHTML = `<strong>${categoryConfig[cat].title}：</strong> ${values.join('、')}`;
+                dateSection.appendChild(item);
               }
             } catch (e) {
-              selected = [val]; // 旧格式
+              console.warn('Failed to parse stats for', cat, date, e);
             }
-            
-            selected.forEach(option => {
-              counts[option] = (counts[option] || 0) + 1;
-            });
           }
         });
 
-        const section = document.createElement('div');
-        section.className = 'stat-section';
-        const config = categoryConfig[cat];
-        section.innerHTML = `
-          <h3><i class="fas fa-${config.icon}"></i> ${config.title}</h3>
-        `;
+        if (hasData) {
+          container.appendChild(dateSection);
+        }
+      });
 
-        if (Object.keys(counts).length === 0) {
-          section.innerHTML += `<div class="no-data">暂无记录</div>`;
-        } else {
-          Object.entries(counts)
-            .sort((a, b) => b[1] - a[1]) // 按频次降序
-            .forEach(([value, count]) => {
-              const item = document.createElement('div');
-              item.className = 'stat-item';
-              item.innerHTML = `
-                <div class="stat-badge" style="background-color: var(--selected-color);">${count}</div>
-                ${value}
-              `;
-              section.appendChild(item);
-            });
+      if (container.innerHTML === '') {
+        container.innerHTML = '<div class="no-data">暂无记录</div>';
+      }
+    }
+
+    function renderCountStats(container) {
+      // 收集所有选项及其出现次数
+      const counter = {};
+
+      // 初始化所有可能选项为 0（可选，也可动态统计）
+     const allOptions = {
+  sleep: ['睡得很好', '失眠了', '早醒了', '中途醒了', '做噩梦了', '深睡少'],
+  food: ['吃得正好', '没按时吃', '没吃饱', '吃撑了', '生冷油腻'],
+  activity: ['运动了', '散步了', '拉伸了', '轻度活动', '需要休息', '晒太阳'],
+  body: ['感觉不错！', '眼睛干涩', '鼻塞不通', '咳嗽不适', '肩颈不适', '腰背酸痛', '腿部沉重', '头痛头晕', '压力过大']
+};
+
+      // 初始化计数器
+      Object.keys(allOptions).forEach(cat => {
+        allOptions[cat].forEach(opt => {
+          counter[opt] = 0;
+        });
+      });
+
+      // 遍历所有 localStorage 中的相关数据
+      const dates = getAllDates();
+      dates.forEach(date => {
+        ['sleep', 'food', 'activity', 'body'].forEach(cat => {
+          const key = `haohao_${cat}_${date}`;
+          const saved = localStorage.getItem(key);
+          if (saved) {
+            try {
+              const values = JSON.parse(saved);
+              if (Array.isArray(values)) {
+                values.forEach(val => {
+                  if (counter.hasOwnProperty(val)) {
+                    counter[val]++;
+                  } else {
+                    // 如果有新选项（未来扩展），也计入
+                    counter[val] = (counter[val] || 0) + 1;
+                  }
+                });
+              }
+            } catch (e) {
+              console.warn('Parse error:', key, e);
+            }
+          }
+        });
+      });
+
+      // 计算趋势（最近一周 vs 更早一周）
+      const trendData = calculateTrends(dates, allOptions);
+
+      // 按类别分组显示
+      let hasData = false;
+      Object.entries(categoryConfig).forEach(([cat, config]) => {
+        const items = allOptions[cat].map(opt => {
+          const count = counter[opt] || 0;
+          let trend = '➡️'; // 默认持平
+          if (trendData[opt] !== undefined) {
+            if (trendData[opt] > 0) trend = '📈'; // 上升
+            else if (trendData[opt] < 0) trend = '📉'; // 下降
+          }
+          return { option: opt, count: count, trend: trend };
+        }).filter(item => item.count > 0).sort((a, b) => b.count - a.count); // 高频在前
+
+        if (items.length > 0) {
+          hasData = true;
+          const section = document.createElement('div');
+          section.style.marginBottom = '24px';
+
+          const title = document.createElement('h3');
+          title.textContent = config.title;
+          title.style.marginBottom = '12px';
+          title.style.color = '#555';
+          section.appendChild(title);
+
+          items.forEach(item => {
+            const div = document.createElement('div');
+            div.className = 'stat-item counts';
+            div.innerHTML = `<span><strong>${item.option}</strong>：${item.count} 次</span><span class="stat-trend">${item.trend}</span>`;
+            section.appendChild(div);
+          });
+
+          container.appendChild(section);
+        }
+      });
+
+      if (!hasData) {
+        container.innerHTML = '<div class="no-data">暂无打卡记录</div>';
+      }
+    }
+
+    // 获取所有已存储的日期键
+    function getAllDates() {
+      const dates = new Set();
+      for (let key in localStorage) {
+        if (key.startsWith('haohao_')) {
+          const parts = key.split('_');
+          if (parts.length >= 3) {
+            const date = parts[2] + '-' + parts[3] + '-' + parts[4]; // 重新组装日期
+            if (/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+              dates.add(date);
+            }
+          }
+        }
+      }
+      return Array.from(dates).sort((a, b) => new Date(a) - new Date(b)); // 从旧到新排序
+    }
+
+    // 计算趋势：最近一周 vs 上一周
+    function calculateTrends(dates, allOptions) {
+      const now = new Date();
+      const oneWeekAgo = new Date(now);
+      oneWeekAgo.setDate(now.getDate() - 7);
+
+      const twoWeeksAgo = new Date(now);
+      twoWeeksAgo.setDate(now.getDate() - 14);
+
+      const recentCounter = {};
+      const previousCounter = {};
+
+      // 初始化计数器
+      Object.keys(allOptions).forEach(cat => {
+        allOptions[cat].forEach(opt => {
+          recentCounter[opt] = 0;
+          previousCounter[opt] = 0;
+        });
+      });
+
+      dates.forEach(date => {
+        const dateObj = new Date(date);
+        let targetCounter = null;
+
+        if (dateObj >= oneWeekAgo) {
+          targetCounter = recentCounter;
+        } else if (dateObj >= twoWeeksAgo) {
+          targetCounter = previousCounter;
         }
 
-        container.appendChild(section);
+        if (targetCounter) {
+          ['sleep', 'food', 'activity', 'body'].forEach(cat => {
+            const key = `haohao_${cat}_${date}`;
+            const saved = localStorage.getItem(key);
+            if (saved) {
+              try {
+                const values = JSON.parse(saved);
+                if (Array.isArray(values)) {
+                  values.forEach(val => {
+                    if (targetCounter.hasOwnProperty(val)) {
+                      targetCounter[val]++;
+                    }
+                  });
+                }
+              } catch (e) {
+                console.warn('Parse error for trend calc:', key, e);
+              }
+            }
+          });
+        }
       });
+
+      const trendMap = {};
+      Object.keys(allOptions).forEach(cat => {
+        allOptions[cat].forEach(opt => {
+          const recent = recentCounter[opt] || 0;
+          const previous = previousCounter[opt] || 0;
+          trendMap[opt] = recent - previous; // 正数表示上升，负数表示下降
+        });
+      });
+
+      return trendMap;
     }
   </script>
 </body>
