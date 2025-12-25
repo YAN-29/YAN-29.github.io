@@ -481,35 +481,47 @@
       el.style.display = el.style.display === 'block' ? 'none' : 'block';
     }
 
-    // 记录打卡
-    document.querySelectorAll('.option-btn').forEach(btn => {
-      btn.addEventListener('click', function() {
-        const category = this.closest('.options').id.replace('-options', '');
-        const value = this.getAttribute('data-value');
-        const today = new Date().toISOString().split('T')[0];
-        const key = `haohao_${category}_${today}`;
-        localStorage.setItem(key, value);
-        // 高亮
-        document.querySelectorAll(`#${category}-options .option-btn`).forEach(b => b.classList.remove('selected'));
-        this.classList.add('selected');
-        if (document.getElementById('stats-page').classList.contains('active')) {
-          renderStats();
-        }
-      });
-    });
+    // 记录打卡（已改多选，保留本地存储，选中/取消选中切换）
+document.querySelectorAll('.option-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    const category = this.closest('.options').id.replace('-options', '');
+    const value = this.getAttribute('data-value');
+    const today = new Date().toISOString().split('T')[0];
+    const key = `haohao_${category}_${today}`;
+    
+    // 多选逻辑：获取已选值，切换当前选项（选中/取消）
+    let selectedVals = JSON.parse(localStorage.getItem(key) || '[]');
+    if (selectedVals.includes(value)) {
+      // 已选中，点击取消
+      selectedVals = selectedVals.filter(v => v !== value);
+      this.classList.remove('selected');
+    } else {
+      // 未选中，点击添加
+      selectedVals.push(value);
+      this.classList.add('selected');
+    }
+    // 保存多选结果到本地存储
+    localStorage.setItem(key, JSON.stringify(selectedVals));
+    
+    // 切换统计页时实时刷新
+    if (document.getElementById('stats-page').classList.contains('active')) {
+      renderStats();
+    }
+  });
+});
 
-    // 加载今日已选
-    window.onload = () => {
-      const today = new Date().toISOString().split('T')[0];
-      ['sleep', 'food', 'activity', 'body'].forEach(cat => {
-        const saved = localStorage.getItem(`haohao_${cat}_${today}`);
-        if (saved) {
-          const btn = [...document.querySelectorAll(`#${cat}-options .option-btn`)]
-            .find(b => b.getAttribute('data-value') === saved);
-          if (btn) btn.classList.add('selected');
-        }
-      });
-    };
+    // 加载今日已选（适配多选，刷新页面保留所有选中项）
+window.onload = () => {
+  const today = new Date().toISOString().split('T')[0];
+  ['sleep', 'food', 'activity', 'body'].forEach(cat => {
+    const savedVals = JSON.parse(localStorage.getItem(`haohao_${cat}_${today}`) || '[]');
+    savedVals.forEach(val => {
+      const btn = [...document.querySelectorAll(`#${cat}-options .option-btn`)]
+        .find(b => b.getAttribute('data-value') === val);
+      if (btn) btn.classList.add('selected');
+    });
+  });
+};
 
     // 时间按钮切换
     document.querySelectorAll('.time-btn').forEach(btn => {
@@ -553,48 +565,48 @@
       return date.toISOString().split('T')[0];
     }
 
-    // 渲染统计
-    function renderStats() {
-      const dates = getDateRange(currentPeriod);
-      const container = document.getElementById('stats-content');
-      container.innerHTML = '';
+    // 渲染统计（适配多选，正常统计所有选中项频次）
+function renderStats() {
+  const dates = getDateRange(currentPeriod);
+  const container = document.getElementById('stats-content');
+  container.innerHTML = '';
 
-      ['sleep', 'food', 'activity', 'body'].forEach(cat => {
-        const counts = {};
-        dates.forEach(date => {
-          const val = localStorage.getItem(`haohao_${cat}_${date}`);
-          if (val) {
-            counts[val] = (counts[val] || 0) + 1;
-          }
-        });
-
-        const section = document.createElement('div');
-        section.className = 'stat-section';
-        const config = categoryConfig[cat];
-        section.innerHTML = `
-          <h3><i class="fas fa-${config.icon}"></i> ${config.title}</h3>
-        `;
-
-        if (Object.keys(counts).length === 0) {
-          section.innerHTML += `<div class="no-data">暂无记录</div>`;
-        } else {
-          Object.entries(counts)
-            .sort((a, b) => b[1] - a[1]) // 按频次降序
-            .forEach(([value, count]) => {
-              const status = statusMap[value] || 'neutral';
-              const item = document.createElement('div');
-              item.className = 'stat-item';
-              item.innerHTML = `
-                <div class="stat-badge" style="background-color: var(--selected-color);">${count}</div>
-                ${value}
-              `;
-              section.appendChild(item);
-            });
-        }
-
-        container.appendChild(section);
+  ['sleep', 'food', 'activity', 'body'].forEach(cat => {
+    const counts = {};
+    dates.forEach(date => {
+      const vals = JSON.parse(localStorage.getItem(`haohao_${cat}_${date}`) || '[]');
+      vals.forEach(val => {
+        counts[val] = (counts[val] || 0) + 1;
       });
+    });
+
+    const section = document.createElement('div');
+    section.className = 'stat-section';
+    const config = categoryConfig[cat];
+    section.innerHTML = `
+      <h3><i class="fas fa-${config.icon}"></i> ${config.title}</h3>
+    `;
+
+    if (Object.keys(counts).length === 0) {
+      section.innerHTML += `<div class="no-data">暂无记录</div>`;
+    } else {
+      Object.entries(counts)
+        .sort((a, b) => b[1] - a[1]) // 按频次降序
+        .forEach(([value, count]) => {
+          const status = statusMap[value] || 'neutral';
+          const item = document.createElement('div');
+          item.className = 'stat-item';
+          item.innerHTML = `
+            <div class="stat-badge" style="background-color: var(--selected-color);">${count}</div>
+            ${value}
+          `;
+          section.appendChild(item);
+        });
     }
+
+    container.appendChild(section);
+  });
+}
   </script>
 </body>
 </html>
