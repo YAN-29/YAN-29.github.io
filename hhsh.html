@@ -252,10 +252,6 @@
       box-shadow: 0 2px 6px rgba(0,0,0,0.2);
     }
 
-    .good { background-color: var(--selected-color); }
-    .mild { background-color: var(--selected-color); }
-    .bad { background-color: var(--selected-color); }
-
     .no-data {
       text-align: center;
       color: #95a5a6;
@@ -432,38 +428,6 @@
       body: { icon: 'heartbeat', title: '身体感受' }
     };
 
-    // 选项分类（用于判断状态颜色）
-    const statusMap = {
-      // 睡眠
-      '睡得很好': 'good',
-      '失眠了': 'bad',
-      '早醒了': 'mild',
-      '中途醒了': 'mild',
-      '做噩梦了': 'mild',
-      // 饮食
-      '吃得正好': 'good',
-      '没按时吃': 'mild',
-      '没吃饱': 'mild',
-      '吃撑了': 'bad',
-      '生冷油腻': 'bad',
-      // 活动
-      '运动了': 'good',
-      '散步了': 'good',
-      '拉伸了': 'good',
-      '轻度活动': 'mild',
-      '需要休息': 'bad',
-      // 身体
-      '感觉不错！': 'good',
-      '眼睛干涩': 'mild',
-      '鼻塞不通': 'mild',
-      '咳嗽不适': 'bad',
-      '肩颈不适': 'mild',
-      '腰背酸痛': 'bad',
-      '腿部沉重': 'mild',
-      '头痛头晕': 'bad',
-      '压力过大': 'bad'
-    };
-
     // 当前统计周期
     let currentPeriod = 'today';
 
@@ -481,47 +445,80 @@
       el.style.display = el.style.display === 'block' ? 'none' : 'block';
     }
 
-    // 记录打卡（已改多选，保留本地存储，选中/取消选中切换）
-document.querySelectorAll('.option-btn').forEach(btn => {
-  btn.addEventListener('click', function() {
-    const category = this.closest('.options').id.replace('-options', '');
-    const value = this.getAttribute('data-value');
-    const today = new Date().toISOString().split('T')[0];
-    const key = `haohao_${category}_${today}`;
-    
-    // 多选逻辑：获取已选值，切换当前选项（选中/取消）
-    let selectedVals = JSON.parse(localStorage.getItem(key) || '[]');
-    if (selectedVals.includes(value)) {
-      // 已选中，点击取消
-      selectedVals = selectedVals.filter(v => v !== value);
-      this.classList.remove('selected');
-    } else {
-      // 未选中，点击添加
-      selectedVals.push(value);
-      this.classList.add('selected');
-    }
-    // 保存多选结果到本地存储
-    localStorage.setItem(key, JSON.stringify(selectedVals));
-    
-    // 切换统计页时实时刷新
-    if (document.getElementById('stats-page').classList.contains('active')) {
-      renderStats();
-    }
-  });
-});
-
-    // 加载今日已选（适配多选，刷新页面保留所有选中项）
-window.onload = () => {
-  const today = new Date().toISOString().split('T')[0];
-  ['sleep', 'food', 'activity', 'body'].forEach(cat => {
-    const savedVals = JSON.parse(localStorage.getItem(`haohao_${cat}_${today}`) || '[]');
-    savedVals.forEach(val => {
-      const btn = [...document.querySelectorAll(`#${cat}-options .option-btn`)]
-        .find(b => b.getAttribute('data-value') === val);
-      if (btn) btn.classList.add('selected');
+    // 记录打卡（多选）
+    document.querySelectorAll('.option-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const category = this.closest('.options').id.replace('-options', '');
+        const value = this.getAttribute('data-value');
+        const today = new Date().toISOString().split('T')[0];
+        const key = `haohao_${category}_${today}`;
+        
+        // 获取当前已选（兼容旧格式）
+        let current = localStorage.getItem(key);
+        let selected = [];
+        
+        // 如果是旧格式（字符串），转换为数组
+        if (current) {
+          try {
+            selected = JSON.parse(current);
+            if (!Array.isArray(selected)) {
+              selected = [current]; // 旧格式是单个值
+            }
+          } catch (e) {
+            // 如果不是 JSON 格式，认为是旧格式字符串
+            selected = [current];
+          }
+        }
+        
+        // 切换选中状态
+        const index = selected.indexOf(value);
+        if (index > -1) {
+          // 取消选中
+          selected.splice(index, 1);
+          this.classList.remove('selected');
+        } else {
+          // 添加选中
+          selected.push(value);
+          this.classList.add('selected');
+        }
+        
+        // 保存到本地（统一用数组格式）
+        if (selected.length > 0) {
+          localStorage.setItem(key, JSON.stringify(selected));
+        } else {
+          localStorage.removeItem(key); // 没有选项时删除
+        }
+        
+        if (document.getElementById('stats-page').classList.contains('active')) {
+          renderStats();
+        }
+      });
     });
-  });
-};
+
+    // 加载今日已选（兼容旧格式）
+    window.onload = () => {
+      const today = new Date().toISOString().split('T')[0];
+      ['sleep', 'food', 'activity', 'body'].forEach(cat => {
+        const saved = localStorage.getItem(`haohao_${cat}_${today}`);
+        if (saved) {
+          let selected = [];
+          try {
+            selected = JSON.parse(saved);
+            if (!Array.isArray(selected)) {
+              selected = [saved]; // 旧格式
+            }
+          } catch (e) {
+            selected = [saved]; // 旧格式
+          }
+          
+          selected.forEach(val => {
+            const btn = [...document.querySelectorAll(`#${cat}-options .option-btn`)]
+              .find(b => b.getAttribute('data-value') === val);
+            if (btn) btn.classList.add('selected');
+          });
+        }
+      });
+    };
 
     // 时间按钮切换
     document.querySelectorAll('.time-btn').forEach(btn => {
@@ -565,48 +562,60 @@ window.onload = () => {
       return date.toISOString().split('T')[0];
     }
 
-    // 渲染统计（适配多选，正常统计所有选中项频次）
-function renderStats() {
-  const dates = getDateRange(currentPeriod);
-  const container = document.getElementById('stats-content');
-  container.innerHTML = '';
+    // 渲染统计
+    function renderStats() {
+      const dates = getDateRange(currentPeriod);
+      const container = document.getElementById('stats-content');
+      container.innerHTML = '';
 
-  ['sleep', 'food', 'activity', 'body'].forEach(cat => {
-    const counts = {};
-    dates.forEach(date => {
-      const vals = JSON.parse(localStorage.getItem(`haohao_${cat}_${date}`) || '[]');
-      vals.forEach(val => {
-        counts[val] = (counts[val] || 0) + 1;
-      });
-    });
-
-    const section = document.createElement('div');
-    section.className = 'stat-section';
-    const config = categoryConfig[cat];
-    section.innerHTML = `
-      <h3><i class="fas fa-${config.icon}"></i> ${config.title}</h3>
-    `;
-
-    if (Object.keys(counts).length === 0) {
-      section.innerHTML += `<div class="no-data">暂无记录</div>`;
-    } else {
-      Object.entries(counts)
-        .sort((a, b) => b[1] - a[1]) // 按频次降序
-        .forEach(([value, count]) => {
-          const status = statusMap[value] || 'neutral';
-          const item = document.createElement('div');
-          item.className = 'stat-item';
-          item.innerHTML = `
-            <div class="stat-badge" style="background-color: var(--selected-color);">${count}</div>
-            ${value}
-          `;
-          section.appendChild(item);
+      ['sleep', 'food', 'activity', 'body'].forEach(cat => {
+        // 统计每个选项出现次数
+        const counts = {};
+        dates.forEach(date => {
+          const val = localStorage.getItem(`haohao_${cat}_${date}`);
+          if (val) {
+            let selected = [];
+            try {
+              selected = JSON.parse(val);
+              if (!Array.isArray(selected)) {
+                selected = [val]; // 旧格式
+              }
+            } catch (e) {
+              selected = [val]; // 旧格式
+            }
+            
+            selected.forEach(option => {
+              counts[option] = (counts[option] || 0) + 1;
+            });
+          }
         });
-    }
 
-    container.appendChild(section);
-  });
-}
+        const section = document.createElement('div');
+        section.className = 'stat-section';
+        const config = categoryConfig[cat];
+        section.innerHTML = `
+          <h3><i class="fas fa-${config.icon}"></i> ${config.title}</h3>
+        `;
+
+        if (Object.keys(counts).length === 0) {
+          section.innerHTML += `<div class="no-data">暂无记录</div>`;
+        } else {
+          Object.entries(counts)
+            .sort((a, b) => b[1] - a[1]) // 按频次降序
+            .forEach(([value, count]) => {
+              const item = document.createElement('div');
+              item.className = 'stat-item';
+              item.innerHTML = `
+                <div class="stat-badge" style="background-color: var(--selected-color);">${count}</div>
+                ${value}
+              `;
+              section.appendChild(item);
+            });
+        }
+
+        container.appendChild(section);
+      });
+    }
   </script>
 </body>
 </html>
