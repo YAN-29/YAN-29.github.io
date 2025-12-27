@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title> 好好生活 </title>
+  <title>好好生活</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet" />
@@ -14,17 +14,28 @@
       box-sizing: border-box;
     }
 
+    :root {
+      --bg-color: #f9f7f2;
+      --card-bg: white;
+      --text-color: #333;
+      --border-color: #eee;
+      --feedback-bg: #e8f5e9;
+      --feedback-color: #33691e;
+    }
+
     body {
       font-family: 'Noto Sans SC', sans-serif;
-      background: #f9f7f2;
-      color: #333;
+      background: var(--bg-color);
+      color: var(--text-color);
       line-height: 1.6;
       padding: 20px;
+      transition: background-color 0.3s;
     }
 
     .container {
       max-width: 800px;
       margin: 0 auto;
+      position: relative;
     }
 
     h1 {
@@ -46,7 +57,7 @@
     }
 
     .subtitle-text {
-      margin-right: 6px; /* 与图标保持间距 */
+      margin-right: 6px;
       opacity: 0;
       transition: opacity 0.3s ease;
     }
@@ -68,45 +79,54 @@
     }
 
     .tip {
-      background: #e8f5e9;
+      background: var(--feedback-bg);
       padding: 14px;
       border-radius: 12px;
       margin: 20px auto;
       max-width: 600px;
       font-size: 0.95rem;
-      color: #2e7d32;
+      color: var(--feedback-color);
       text-align: center;
       border-left: 3px solid #4caf50;
-      display: none; /* 隐藏提示框 */
+      display: none;
     }
 
     .section {
-      background: white;
+      background: var(--card-bg);
       border-radius: 16px;
       padding: 20px;
       margin-bottom: 24px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+      border: 1px solid var(--border-color);
     }
 
     .section-title {
       font-size: 1.2rem;
-      margin-bottom: 16px;
       color: #444;
+      margin: 0 0 16px 0;
+    }
+
+    .section-title small {
+      display: block;
+      font-size: 0.8rem;
+      color: #757575;
+      margin-top: 4px;
     }
 
     .options-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr); /* 强制 3 列 */
+      grid-template-columns: repeat(3, 1fr);
       gap: 12px;
     }
 
     .option-card {
-      border: 2px solid #eee;
+      border: 2px solid var(--border-color);
       border-radius: 12px;
       overflow: hidden;
       cursor: pointer;
       transition: all 0.2s;
       text-align: center;
+      background: var(--card-bg);
     }
 
     .option-card:hover {
@@ -123,6 +143,11 @@
       height: 80px;
       object-fit: cover;
       background: #f5f5f5;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:bold;
+      font-size:1.5rem;
     }
 
     .option-label {
@@ -135,6 +160,36 @@
       font-size: 0.8rem;
       color: #757575;
       padding: 0 4px 8px;
+    }
+
+    .module-feedback {
+      margin-top: 16px;
+      padding: 10px 16px;
+      background: var(--feedback-bg);
+      color: var(--feedback-color);
+      border-radius: 12px;
+      font-size: 0.95rem;
+      text-align: center;
+      opacity: 0;
+      transform: translateY(5px);
+      transition: opacity 0.3s, transform 0.3s;
+      max-width: 90%;
+      margin-left: auto;
+      margin-right: auto;
+      word-break: break-word;
+      line-height: 1.4;
+    }
+
+    .module-feedback.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .module-feedback small {
+      display: block;
+      margin-top: 6px;
+      font-size: 0.9rem;
+      opacity: 0.9;
     }
 
     .tabs {
@@ -160,19 +215,20 @@
 
     .stat-item {
       padding: 12px 0;
-      border-bottom: 1px dashed #eee;
+      border-bottom: 1px dashed var(--border-color);
       display: flex;
       justify-content: space-between;
-      align-items: center; /* 使内容垂直居中 */
+      align-items: center;
     }
 
-    .stat-item.counts { /* 用于次数统计的样式 */
+    .stat-item.counts {
       justify-content: space-between;
     }
 
-    .stat-trend { /* 趋势图标样式 */
+    .stat-trend {
       font-size: 1.1rem;
       margin-left: 8px;
+      color: #555;
     }
 
     .no-data {
@@ -209,6 +265,101 @@
     .nav-buttons button.secondary {
       background: #9e9e9e;
     }
+
+    /* === 隐私模态框 === */
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s;
+    }
+
+    .modal.show {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 24px;
+      border-radius: 16px;
+      max-width: 400px;
+      width: 90%;
+      text-align: center;
+    }
+
+    .modal h3 {
+      margin-bottom: 16px;
+      color: #333;
+    }
+
+    .modal p {
+      margin: 12px 0;
+      color: #666;
+      font-size: 0.95rem;
+    }
+
+    .modal-buttons {
+      margin-top: 20px;
+    }
+
+    .modal-buttons button {
+      padding: 8px 16px;
+      margin: 0 6px;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+    }
+
+    .btn-delete {
+      background: #f44336;
+      color: white;
+    }
+
+    .btn-cancel {
+      background: #e0e0e0;
+    }
+
+    .btn-complete {
+      background: #4caf50;
+      color: white;
+    }
+
+    /* 删除成功提示样式 */
+    .delete-success {
+      color: #4caf50;
+      font-weight: 500;
+      margin: 10px 0;
+      display: none;
+    }
+
+    /* 设置图标样式（替代隐私说明） */
+    .settings-icon {
+      position: absolute;
+      bottom: 10px;
+      right: 20px; /* 右移，比原来的10px多 */
+      font-size: 1.2rem; /* 图标更大更显眼 */
+      color: #888;
+      cursor: pointer;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .settings-icon:hover {
+      color: #555;
+    }
   </style>
 </head>
 <body>
@@ -219,168 +370,195 @@
       <span id="mars-icon" class="mars">🌕</span>
     </p>
 
-    <!-- <div class="tip"> -->
-    <!-- "吃饭的时候专注感受每一口的味道，细嚼慢咽不仅有助于消化，还能让我们更好地享受美食带来的快乐。" -->
-    <!-- </div> -->
-
     <!-- 打卡页 -->
     <div id="main-page" class="page active">
       <!-- 睡眠 -->
       <div class="section">
-        <div class="section-title">睡眠<br><small style="font-size:0.8rem;color:#757575;">记得十一点前入睡哦</small></div>
+        <h2 class="section-title">睡眠<br><small>记得十一点前入睡哦</small></h2>
         <div class="options-grid" data-category="sleep">
           <div class="option-card" data-value="睡得很好">
-            <img class="option-img" src="https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cDovL3ZlZXIwNS5jZnAuY24vY3JlYXRpdmUvdmNnL3ZlZXIvMTYwMHdhdGVyL3ZlZXItMzM2MjEzMzQxLmpwZw==&sign=yx:MAC0rKpUOp1XPtFBoo_HTaO7_zE=&tv=400_400" alt="睡得很好">
+            <div class="option-img" style="background:#e8f5e8;color:#4caf50;">😴</div>
             <div class="option-label">睡得很好</div>
             <div class="option-desc">一觉到天亮</div>
           </div>
           <div class="option-card" data-value="失眠了">
-            <img class="option-img" src="https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cDovL3Bob3RvLXN0YXRpYy1hcGkuZm90b21vcmUuY29tL2NyZWF0aXZlL3ZjZy92ZWVyL25vd2FydGVyODAwL25ldy9WQ0c0MU40NzA3MTIxMDIuanBn&sign=yx:0uNX5tX1D8cToT9vbIlulQyuioI=&tv=400_400" alt="失眠了">
+            <div class="option-img" style="background:#ffebee;color:#f44336;">😵</div>
             <div class="option-label">失眠了</div>
             <div class="option-desc">难以入眠</div>
           </div>
           <div class="option-card" data-value="早醒了">
-            <img class="option-img" src="https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly9pbWcuZG9uZ2xpcGluLmNvbS9waWNmaWxlcy9wLzEwNC8xMDQ3MjEvMTY4NzMzMzMwNTkxODQyNy5qcGc=&sign=yx:aQdbadIJ5z0vgm4oc-CLRh2mPec=&tv=400_400" alt="早醒了">
+            <div class="option-img" style="background:#fff8e1;color:#ff9800;">🌅</div>
             <div class="option-label">早醒了</div>
             <div class="option-desc">醒得过早</div>
           </div>
           <div class="option-card" data-value="中途醒了">
-            <img class="option-img" src="https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cDovL3RlbmZlaTAxLmNmcC5jbi9jcmVhdGl2ZS92Y2cvdmVlci8xNjAwd2F0ZXIvdmVlci0zOTk5NjI5ODUuanBn&sign=yx:a2Gcn5I3WVQXDLg4U85Xu-DRkGo=&tv=400_400" alt="中途醒了">
+            <div class="option-img" style="background:#e3f2fd;color:#2196f3;">🌃</div>
             <div class="option-label">中途醒了</div>
             <div class="option-desc">多次醒来</div>
           </div>
           <div class="option-card" data-value="深睡少">
-         <div class="option-img" style="background:#e0f7fa;display:flex;align-items:center;justify-content:center;color:#0097a7;font-weight:bold;">🌙</div>
-  <div class="option-label">深睡少</div>
-  <div class="option-desc">浅睡为主</div>
-</div>
+            <div class="option-img" style="background:#e0f7fa;color:#0097a7;">🥱</div>
+            <div class="option-label">深睡少</div>
+            <div class="option-desc">浅睡为主</div>
+          </div>
           <div class="option-card" data-value="做噩梦了">
-            <img class="option-img" src="https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cDovL3RlbmZlaTA1LmNmcC5jbi9jcmVhdGl2ZS92Y2cvdmVlci8xNjAwd2F0ZXIvdmVlci0zNjgxNTMzNTkuanBn&sign=yx:1-uxbs15OKy54Ew5tfQu--NmOk4=&tv=400_400" alt="做噩梦了">
+            <div class="option-img" style="background:#f3e5f5;color:#9c27b0;">😱</div>
             <div class="option-label">做噩梦了</div>
             <div class="option-desc">梦境困扰</div>
           </div>
         </div>
+        <div class="module-feedback"></div>
       </div>
 
       <!-- 饮食 -->
       <div class="section">
-        <div class="section-title">饮食<br><small style="font-size:0.8rem;color:#757575;"> 沉浸享受美食，细嚼慢咽</small></div>
+        <h2 class="section-title">饮食<br><small>沉浸享受美食，细嚼慢咽</small></h2>
         <div class="options-grid" data-category="food">
           <div class="option-card" data-value="吃得正好">
-            <img class="option-img" src="https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly9pbWcwOC50b29vcGVuLmNvbS8yMDIxMDkwMS90b29vcGVuX3YxNjIxNTUyMTU1Y2Q5ZWVhOTMtNDBmMS00NzA3LWE4YzQtMzJjYTNiMWNkOTA5LmpwZw==&sign=yx:G82XrrnLdOMsvQ5VpOlH66CtKbA=&tv=400_400" alt="吃得正好">
+            <div class="option-img" style="background:#e8f5e8;color:#4caf50;">🍚</div>
             <div class="option-label">吃得正好</div>
             <div class="option-desc">营养均衡</div>
           </div>
           <div class="option-card" data-value="没按时吃">
-            <img class="option-img" src="https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cDovL2ltYWdlMTA5LjM2MGRvYy5jb20vRG93bmxvYWRJbWcvMjAyMC8xMC8zMDA5LzIwNTkzNDA3OV8xXzIwMjAxMDMwMDk1OTI5NjE4X3dt&sign=yx:p5HD8J6ddnLaYnttDo07-ToIeAI=&tv=400_400" alt="没按时吃">
+            <div class="option-img" style="background:#fff8e1;color:#ff9800;">⏰</div>
             <div class="option-label">没按时吃</div>
             <div class="option-desc">作息不规律</div>
           </div>
           <div class="option-card" data-value="没吃饱">
-            <img class="option-img" src="https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cDovL2ltZzk1LjY5OXBpYy5jb20veHNqLzBiL3Y5L28xLmpwZyEvZncvNzAwL3dhdGVybWFyay91cmwvTDNoemFpOTNZWFJsY2w5a1pYUmhhV3d5TG5CdVp3L2FsaWduL3NvdXRoZWFzdA==&sign=yx:8yDsay1bqgXQOq515FCxSwtYaf8=&tv=400_400" alt="没吃饱">
+            <div class="option-img" style="background:#ffebee;color:#f44336;">🍽️</div>
             <div class="option-label">没吃饱</div>
             <div class="option-desc">营养不足</div>
           </div>
           <div class="option-card" data-value="吃撑了">
-            <img class="option-img" src="https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly93eDIuc2luYWltZy5jbi9sYXJnZS8wMDV6MmJER2d5MWhuazZmem5ycWlqMzJjMDJjMGU4My5qcGc=&sign=yx:zsDYoDOm9IQIFn_nRO9BWb3g8Fo=&tv=400_400" alt="吃撑了">
+            <div class="option-img" style="background:#f3e5f5;color:#9c27b0;">🍝</div>
             <div class="option-label">吃撑了</div>
             <div class="option-desc">过量进食</div>
           </div>
-          <div class="option-card" data-value="生冷油腻">
-            <img class="option-img" src="https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cDovL2FsaWZlaTA1LmNmcC5jbi9jcmVhdGl2ZS92Y2cvdmVlci8xNjAwd2F0ZXIvdmVlci0zNzc0OTIyODQuanBn&sign=yx:lU1113TFD-X11lQT1BgPtEwipH8=&tv=400_400" alt="生冷油腻">
-            <div class="option-label">生冷油腻</div>
+          <div class="option-card" data-value="辛辣生冷油腻">
+            <div class="option-img" style="background:#e1f5fe;color:#03a9f4;">🍣</div>
+            <div class="option-label">辛辣生冷油腻</div>
             <div class="option-desc">不健康选择</div>
           </div>
         </div>
+        <div class="module-feedback"></div>
       </div>
 
       <!-- 活动 -->
       <div class="section">
-        <div class="section-title"> 活动<br><small style="font-size:0.8rem;color:#757575;">适量运动哦</small></div>
+        <h2 class="section-title">活动<br><small>适量运动哦</small></h2>
         <div class="options-grid" data-category="activity">
           <div class="option-card" data-value="运动了">
-            <img class="option-img" src="https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cDovL2ltZy5hbGljZG4uY29tL2Jhby91cGxvYWRlZC9pMi8xNzgyMjcwMDcvTzFDTjAxMHZzSlF1MjFkR0VieUJBMnJfISExNzgyMjcwMDcuanBn&sign=yx:J4a-_9gwbZCzojLucpz1iiIbYtk=&tv=400_400" alt="运动了">
+            <div class="option-img" style="background:#e8f5e8;color:#4caf50;">🏋️</div>
             <div class="option-label">运动了</div>
             <div class="option-desc">专业锻炼</div>
           </div>
           <div class="option-card" data-value="散步了">
-            <img class="option-img" src="https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly9wMC5zc2wucWhpbWdzMS5jb20vdDAxYjM3MGRiMTRhYmM3Y2RlNC5qcGc=&sign=yx:4CM3rBDFI5LQBtkMvnbDvBcbQRI=&tv=400_400" alt="散步了">
+            <div class="option-img" style="background:#fff8e1;color:#ff9800;">🚶</div>
             <div class="option-label">散步了</div>
             <div class="option-desc">轻松步行</div>
           </div>
-<div class="option-card" data-value="晒太阳">
-  <div class="option-img" style="background:#fff8e1;display:flex;align-items:center;justify-content:center;color:#ff9800;font-weight:bold;">☀️</div>
-  <div class="option-label">晒太阳</div>
-  <div class="option-desc">补充维生素D</div>
-</div>
+          <div class="option-card" data-value="晒太阳">
+            <div class="option-img" style="background:#fff8e1;color:#ff9800;">☀️</div>
+            <div class="option-label">晒太阳</div>
+            <div class="option-desc">补充维生素D</div>
+          </div>
           <div class="option-card" data-value="拉伸了">
-            <img class="option-img" src="https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly90Ny5iYWlkdS5jb20vaXQvdT0yNjE0NDkyMDAxLDQwMjUzODE2NyZmbT0xOTM=&sign=yx:iPaUv4Afvis_3PQfezWb0OlaiyA=&tv=400_400" alt="拉伸了">
+            <div class="option-img" style="background:#e3f2fd;color:#2196f3;">🧘</div>
             <div class="option-label">拉伸了</div>
             <div class="option-desc">柔韧性训练</div>
           </div>
           <div class="option-card" data-value="轻度活动">
-            <img class="option-img" src="https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly9pbWcuemNvb2wuY24vY29tbXVuaXR5LzAxMjcyNDVkNDc4Y2YwYTgwMTIxODdmNDI0NWQyMC5qcGc_eC1vc3MtcHJvY2Vzcz1pbWFnZS9hdXRvLW9yaWVudCwxL3Jlc2l6ZSxtX2xmaXQsd18xMjgwLGxpbWl0XzEvc2hhcnBlbiwxMDAvcXVhbGl0eSxxXzEwMA==&sign=yx:Srl5Mr3wxG9fZq_MUMOlNCAjUNc=&tv=400_400" alt="轻度活动">
+            <div class="option-img" style="background:#e0f7fa;color:#0097a7;">🧹</div>
             <div class="option-label">轻度活动</div>
             <div class="option-desc">日常劳作</div>
           </div>
           <div class="option-card" data-value="需要休息">
-            <img class="option-img" src="https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cDovL2ltZzk1LjY5OXBpYy5jb20veHNqLzBhLzA0L2lpLmpwZyEvZncvNzAwL3dhdGVybWFyay91cmwvTDNoemFpOTNZWFJsY2w5a1pYUmhhV3d5TG5CdVp3L2FsaWduL3NvdXRoZWFzdA==&sign=yx:dZcoGlOqA_0ilsKdCfRrVeXQ9Yo=&tv=400_400" alt="需要休息">
+            <div class="option-img" style="background:#ffebee;color:#f44336;">🛋️</div>
             <div class="option-label">需要休息</div>
             <div class="option-desc">过度疲劳</div>
           </div>
         </div>
+        <div class="module-feedback"></div>
       </div>
 
-      <!-- 身体感受 -->
+      <!-- 身体感受：修改 - 合并腹痛/腹胀为腹部不适，图标改为🤢 -->
       <div class="section">
-        <div class="section-title">身体自查<br><small style="font-size:0.8rem;color:#757575;">关注身体细微变化</small></div>
+        <h2 class="section-title">身体自查<br><small>关注身体细微变化</small></h2>
         <div class="options-grid" data-category="body">
+          <!-- 1. 感觉不错 -->
           <div class="option-card" data-value="感觉不错！">
-            <div class="option-img" style="background:#e8f5e8;display:flex;align-items:center;justify-content:center;color:#4caf50;font-weight:bold;">😊</div>
+            <div class="option-img" style="background:#e8f5e8;color:#4caf50;">😊</div>
             <div class="option-label">感觉不错！</div>
             <div class="option-desc">状态良好</div>
           </div>
-          <div class="option-card" data-value="眼睛干涩">
-            <div class="option-img" style="background:#ffebee;display:flex;align-items:center;justify-content:center;color:#f44336;">👁️</div>
-            <div class="option-label">眼睛干涩</div>
-            <div class="option-desc">用眼过度</div>
+          <!-- 2. 疲惫乏力 -->
+          <div class="option-card" data-value="疲惫乏力">
+            <div class="option-img" style="background:#fff8e1;color:#ff9800;">😩</div>
+            <div class="option-label">疲惫乏力</div>
+            <div class="option-desc">全身无力</div>
           </div>
-          <div class="option-card" data-value="鼻塞不通">
-            <div class="option-img" style="background:#e3f2fd;display:flex;align-items:center;justify-content:center;color:#2196f3;">👃</div>
-            <div class="option-label">鼻塞不通</div>
-            <div class="option-desc">可能感冒</div>
-          </div>
-          <div class="option-card" data-value="咳嗽不适">
-            <div class="option-img" style="background:#fff3e0;display:flex;align-items:center;justify-content:center;color:#ff9800;">🤧</div>
-            <div class="option-label">咳嗽不适</div>
-            <div class="option-desc">呼吸道敏感</div>
-          </div>
-          <div class="option-card" data-value="肩颈不适">
-            <div class="option-img" style="background:#f3e5f5;display:flex;align-items:center;justify-content:center;color:#9c27b0;">💆</div>
-            <div class="option-label">肩颈不适</div>
-            <div class="option-desc">久坐导致</div>
-          </div>
-          <div class="option-card" data-value="腰背酸痛">
-            <div class="option-img" style="background:#e1f5fe;display:flex;align-items:center;justify-content:center;color:#03a9f4;">🦴</div>
-            <div class="option-label">腰背酸痛</div>
-            <div class="option-desc">姿势不良</div>
-          </div>
-          <div class="option-card" data-value="腿部沉重">
-            <div class="option-img" style="background:#e8f5e8;display:flex;align-items:center;justify-content:center;color:#4caf50;">🦵</div>
-            <div class="option-label">腿部沉重</div>
-            <div class="option-desc">循环不畅</div>
-          </div>
+          <!-- 3. 头痛头晕 -->
           <div class="option-card" data-value="头痛头晕">
-            <div class="option-img" style="background:#ffebee;display:flex;align-items:center;justify-content:center;color:#f44336;">🧠</div>
+            <div class="option-img" style="background:#ffebee;color:#f44336;">🧠</div>
             <div class="option-label">头痛头晕</div>
             <div class="option-desc">压力或疲劳</div>
           </div>
+          <!-- 4. 眼睛干涩 -->
+          <div class="option-card" data-value="眼睛干涩">
+            <div class="option-img" style="background:#ffebee;color:#f44336;">👁️</div>
+            <div class="option-label">眼睛干涩</div>
+            <div class="option-desc">用眼过度</div>
+          </div>
+          <!-- 5. 鼻塞不通 -->
+          <div class="option-card" data-value="鼻塞不通">
+            <div class="option-img" style="background:#e3f2fd;color:#2196f3;">👃</div>
+            <div class="option-label">鼻塞不通</div>
+            <div class="option-desc">可能感冒</div>
+          </div>
+          <!-- 6. 咳嗽不适 -->
+          <div class="option-card" data-value="咳嗽不适">
+            <div class="option-img" style="background:#fff3e0;color:#ff9800;">🤧</div>
+            <div class="option-label">咳嗽不适</div>
+            <div class="option-desc">呼吸道敏感</div>
+          </div>
+          <!-- 7. 胸闷气短 -->
+          <div class="option-card" data-value="胸闷气短">
+            <div class="option-img" style="background:#ffebee;color:#f44336;">🫁</div>
+            <div class="option-label">胸闷气短</div>
+            <div class="option-desc">呼吸不畅</div>
+          </div>
+          <!-- 8. 肩颈不适 -->
+          <div class="option-card" data-value="肩颈不适">
+            <div class="option-img" style="background:#f3e5f5;color:#9c27b0;">💆</div>
+            <div class="option-label">肩颈不适</div>
+            <div class="option-desc">久坐导致</div>
+          </div>
+          <!-- 9. 腰背酸痛 -->
+          <div class="option-card" data-value="腰背酸痛">
+            <div class="option-img" style="background:#e1f5fe;color:#03a9f4;">🦴</div>
+            <div class="option-label">腰背酸痛</div>
+            <div class="option-desc">姿势不良</div>
+          </div>
+          <!-- 10. 腹部不适（合并原腹痛/腹胀，图标改为🤢） -->
+          <div class="option-card" data-value="腹部不适">
+            <div class="option-img" style="background:#ffebee;color:#f44336;">🤢</div>
+            <div class="option-label">腹部不适</div>
+            <div class="option-desc">腹痛/腹胀等不适</div>
+          </div>
+          <!-- 11. 腿部沉重 -->
+          <div class="option-card" data-value="腿部沉重">
+            <div class="option-img" style="background:#e8f5e8;color:#4caf50;">🦵</div>
+            <div class="option-label">腿部沉重</div>
+            <div class="option-desc">循环不畅</div>
+          </div>
+          <!-- 12. 压力过大 -->
           <div class="option-card" data-value="压力过大">
-            <div class="option-img" style="background:#fff8e1;display:flex;align-items:center;justify-content:center;color:#ff9800;">😰</div>
+            <div class="option-img" style="background:#fff8e1;color:#ff9800;">😰</div>
             <div class="option-label">压力过大</div>
             <div class="option-desc">情绪紧张</div>
           </div>
         </div>
+        <div class="module-feedback"></div>
       </div>
     </div>
 
@@ -394,6 +572,9 @@
         <button class="tab-btn" data-period="all">全部记录</button>
       </div>
       <div id="stats-content"></div>
+
+      <!-- 设置图标（替代原来的隐私说明文字） -->
+      <div class="settings-icon" id="privacyLink">⚙️</div>
     </div>
 
     <div class="nav-buttons">
@@ -402,8 +583,25 @@
     </div>
   </div>
 
+  <!-- 隐私模态框 -->
+  <div class="modal" id="privacyModal">
+    <div class="modal-content">
+      <h3>关于你的数据</h3>
+      <p>所有记录仅保存在你的设备中，<br>不会上传到任何服务器。</p>
+      <p>关闭浏览器或清除缓存后，数据将消失。</p>
+      <!-- 新增删除成功提示 -->
+      <div class="delete-success" id="deleteSuccess">✅ 已经删除了所有记录！</div>
+      <div class="modal-buttons" id="modalButtons">
+        <button class="btn-delete" id="clearDataBtn">🗑️ 一键删除所有记录</button>
+        <button class="btn-cancel" id="closeModal">我知道了</button>
+        <!-- 新增完成按钮（默认隐藏） -->
+        <button class="btn-complete" id="completeBtn" style="display: none;">完成</button>
+      </div>
+    </div>
+  </div>
+
   <script>
-    // --- 将函数定义移到此处 ---
+    // === 全局状态 ===
     const categoryConfig = {
       sleep: { title: '睡眠情况' },
       food: { title: '饮食情况' },
@@ -413,18 +611,61 @@
 
     let currentPeriod = 'today';
 
-    // 切换页面
+    // === 页面切换 ===
     function switchPage(page) {
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.getElementById(`${page}-page`).classList.add('active');
       if (page === 'stats') renderStats();
     }
 
-    // 多选逻辑
+    // === 共情反馈文案库：修改 - 替换腹部不适的反馈 ===
+    const feedbackMessages = {
+      sleep: {
+        '睡得很好': '🌙 身体在修复，真好。',
+        '失眠了': '夜深人静时，允许自己休息就好，不必强求入睡。\n<small>可以试试把灯调暗，听一段白噪音。</small>',
+        '早醒了': '清晨醒来有点早？没关系，闭眼放松也是休息。\n<small>此刻不必看时间，让呼吸慢下来。</small>',
+        '中途醒了': '夜里醒来几次很正常，你已经在努力照顾自己了。\n<small>翻个身，给自己一个拥抱。</small>',
+        '深睡少': '浅睡也是睡，今天可以试试睡前泡个脚～\n<small>热水泡脚10分钟，会舒服很多。</small>',
+        '做噩梦了': '梦境吓到你了吗？现在是安全的，深呼吸一下吧。\n<small>喝一小口温水，回到当下。</small>'
+      },
+      food: {
+        '吃得正好': '🍚 每一口都值得好好品味。',
+        '没按时吃': '忙的时候也要记得喂饱自己呀。\n<small>哪怕只吃几口饼干，也比空着好。</small>',
+        '没吃饱': '下一餐，慢慢吃，吃到满足为止。\n<small>胃说它还想再吃一点，那就再吃一点。</small>',
+        '吃撑了': '胃说它有点累啦，下次七分饱刚刚好。\n<small>站起来走两步，帮助消化。</small>',
+        '生冷油腻': '偶尔放纵没关系，明天可以清淡一点～\n<small>煮点小米粥，暖暖胃吧。</small>'
+      },
+      activity: {
+        '运动了': '💪 身体感谢你的用心陪伴！',
+        '散步了': '🚶‍♀️ 脚步虽轻，却是对生活温柔的回应。',
+        '晒太阳': '☀️ 阳光是最好的维生素，你做得很好！',
+        '拉伸了': '🧘 肌肉松下来了，心也会跟着放松一点。\n<small>现在可以做一次深呼吸，感受身体的舒展。</small>',
+        '轻度活动': '日常的小动作，也是在好好活着呢。\n<small>给自己一个微笑，你很棒。</small>',
+        '需要休息': '停下来不是偷懒，是身体在请求关怀。\n<small>现在闭眼，做3次深呼吸，让身体放松。</small>'
+      },
+      body: {
+        '感觉不错！': '😊 今天的状态真棒，继续保持这份觉察吧！',
+        '疲惫乏力': '身体在提醒你需要休息啦，不用硬撑。\n<small>找个舒服的姿势坐下来，闭眼休息5分钟。</small>',
+        '头痛头晕': '🧠 头晕的时候，找个安静角落深呼吸几次。\n<small>现在停下来喝口水，让大脑休息一下。</small>',
+        '眼睛干涩': '👁️ 眼睛累了，闭一会儿，让它休息一下。\n<small>现在看看远处，眨眨眼。</small>',
+        '鼻塞不通': '👃 呼吸不畅的时候，试试温水蒸气～\n<small>用热毛巾敷一下鼻子，会舒服些。</small>',
+        '咳嗽不适': '🤧 喉咙不舒服？小口喝点温水吧。\n<small>现在喝一口温水，润润嗓子。</small>',
+        '胸闷气短': '呼吸有点费力是吗？慢慢调整节奏就好。\n<small>用鼻子吸气4秒，嘴巴呼气6秒，重复3次。</small>',
+        '肩颈不适': '💆 肩膀扛了太多，轻轻转一转，释放一点压力。\n<small>现在把肩膀耸起，然后放松，重复3次。</small>',
+        '腰背酸痛': '🦴 背有点累了吧？靠一靠，别硬撑。\n<small>现在起身，双手扶腰，轻轻向后仰一下。</small>',
+        // 修改：新增腹部不适反馈（合并原腹痛/腹胀）
+        '腹部不适': '腹部有点不舒服，先让身体放松下来。\n<small>注意饮食清淡，慢慢走一走帮助消化。</small>',
+        '腿部沉重': '🦵 腿说它想歇一歇，抬高一下会舒服些。\n<small>现在坐下，把腿抬起来，让血液回流。</small>',
+        '压力过大': '😰 压力大时，允许自己“什么都不做”一会儿。\n<small>现在闭眼，深呼吸，什么都不想。</small>'
+      }
+    };
+
+    // === 多选 + 模块内反馈横条（含微行动）===
     document.querySelectorAll('.option-card').forEach(card => {
       card.addEventListener('click', function () {
         this.classList.toggle('selected');
         const category = this.closest('.options-grid').dataset.category;
+        const value = this.dataset.value;
         const today = new Date().toISOString().split('T')[0];
 
         const selectedValues = Array.from(
@@ -432,6 +673,24 @@
         ).map(c => c.dataset.value);
 
         localStorage.setItem(`haohao_${category}_${today}`, JSON.stringify(selectedValues));
+
+        // === 找到当前模块的反馈横条 ===
+        const section = this.closest('.section');
+        const feedbackEl = section.querySelector('.module-feedback');
+
+        const msg = feedbackMessages[category]?.[value] || '谢谢你关注自己的感受。';
+        feedbackEl.innerHTML = msg.replace('\n<small>', '<small>').replace('</small>', '</small>');
+
+        // 显示 + 动画
+        feedbackEl.classList.remove('show');
+        void feedbackEl.offsetWidth; // 触发重排
+        feedbackEl.classList.add('show');
+
+        // 3秒后淡出
+        clearTimeout(feedbackEl.timeoutId);
+        feedbackEl.timeoutId = setTimeout(() => {
+          feedbackEl.classList.remove('show');
+        }, 3000);
       });
     });
 
@@ -439,7 +698,6 @@
     const marsIcon = document.getElementById('mars-icon');
     const subtitleText = document.getElementById('subtitle-text');
 
-    // 从 localStorage 加载月亮点亮和文字显示状态
     const isMarsLit = localStorage.getItem('mars_lit') === 'true';
     const isTextVisible = localStorage.getItem('subtitle_text_visible') === 'true';
 
@@ -455,13 +713,11 @@
       const isCurrentlyVisible = subtitleText.classList.contains('visible');
 
       if (isCurrentlyLit && isCurrentlyVisible) {
-        // 如果当前点亮且文字可见，则熄灭并隐藏文字
         marsIcon.classList.remove('lit');
         subtitleText.classList.remove('visible');
         localStorage.setItem('mars_lit', 'false');
         localStorage.setItem('subtitle_text_visible', 'false');
       } else {
-        // 否则，点亮并显示文字
         marsIcon.classList.add('lit');
         subtitleText.classList.add('visible');
         localStorage.setItem('mars_lit', 'true');
@@ -491,7 +747,7 @@
       });
     };
 
-    // 时间切换
+    // 时间切换 & 统计页逻辑
     document.querySelectorAll('.tab-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -501,10 +757,52 @@
       });
     });
 
-    // 获取日期范围
+    // === 隐私模态框 ===
+    const privacyLink = document.getElementById('privacyLink');
+    const privacyModal = document.getElementById('privacyModal');
+    const closeModal = document.getElementById('closeModal');
+    const clearDataBtn = document.getElementById('clearDataBtn');
+    const deleteSuccess = document.getElementById('deleteSuccess');
+    const completeBtn = document.getElementById('completeBtn');
+    const modalButtons = document.getElementById('modalButtons');
+
+    privacyLink.addEventListener('click', () => {
+      privacyModal.classList.add('show');
+    });
+
+    closeModal.addEventListener('click', () => {
+      privacyModal.classList.remove('show');
+    });
+
+    // 修改删除按钮点击事件
+    clearDataBtn.addEventListener('click', () => {
+      // 直接删除所有记录，不再弹出确认框
+      Object.keys(localStorage).forEach(key => {
+        if (key.startsWith('haohao_')) {
+          localStorage.removeItem(key);
+        }
+      });
+      
+      // 显示删除成功提示
+      deleteSuccess.style.display = 'block';
+      
+      // 隐藏原有按钮，显示完成按钮
+      clearDataBtn.style.display = 'none';
+      closeModal.style.display = 'none';
+      completeBtn.style.display = 'inline-block';
+    });
+
+    // 完成按钮点击事件
+    completeBtn.addEventListener('click', () => {
+      privacyModal.classList.remove('show');
+      // 刷新页面清除已选状态
+      location.reload();
+    });
+
     function getDateRange(period) {
       const now = new Date();
       const dates = [];
+      
       if (period === 'today') {
         dates.push(formatDate(now));
       } else if (period === 'yesterday') {
@@ -518,15 +816,17 @@
           dates.push(formatDate(d));
         }
       } else if (period === 'month') {
+        // 修复：正确获取本月所有日期（从1号到最后一天）
         const year = now.getFullYear();
         const month = now.getMonth();
-        const daysInMonth = new Date(year, month + 1, 0).getDate();
-        for (let i = Math.min(daysInMonth, 31) - 1; i >= 0; i--) {
-          const d = new Date(year, month, now.getDate() - i);
+        // 获取当月最后一天
+        const lastDay = new Date(year, month + 1, 0).getDate();
+        // 生成当月1号到最后一天的所有日期
+        for (let day = 1; day <= lastDay; day++) {
+          const d = new Date(year, month, day);
           dates.push(formatDate(d));
         }
       } else if (period === 'all') {
-        // 'all' 模式不使用此函数，返回空数组
         return [];
       }
       return dates;
@@ -536,25 +836,59 @@
       return date.toISOString().split('T')[0];
     }
 
-    // 渲染统计（支持多选和次数统计）
     function renderStats() {
       const container = document.getElementById('stats-content');
       container.innerHTML = '';
 
       if (currentPeriod === 'all') {
-        // 渲染次数统计
         renderCountStats(container);
       } else {
-        // 渲染按日期统计
         renderDateStats(container);
       }
     }
 
     function renderDateStats(container) {
       const dates = getDateRange(currentPeriod);
+      container.innerHTML = '';
+
+      const allSelected = [];
+      let hasData = false;
 
       dates.forEach(date => {
-        let hasData = false;
+        ['sleep', 'food', 'activity', 'body'].forEach(cat => {
+          const saved = localStorage.getItem(`haohao_${cat}_${date}`);
+          if (saved) {
+            try {
+              const values = JSON.parse(saved);
+              if (Array.isArray(values) && values.length > 0) {
+                hasData = true;
+                values.forEach(v => allSelected.push({ date, category: cat, value: v }));
+              }
+            } catch (e) {
+              console.warn('Failed to parse stats for', cat, date, e);
+            }
+          }
+        });
+      });
+
+      if (!hasData) {
+        container.innerHTML = '<div class="no-data">暂无记录</div>';
+        return;
+      }
+
+      // 只渲染有数据的日期
+      const datesWithData = new Set(allSelected.map(r => r.date));
+      const sortedDates = Array.from(datesWithData).sort((a, b) => new Date(b) - new Date(a));
+
+      // 标题改为中性描述
+      const title = document.createElement('h3');
+      title.textContent = '你在这些日子里照顾了自己';
+      title.style.textAlign = 'center';
+      title.style.marginBottom = '20px';
+      title.style.color = '#555';
+      container.appendChild(title);
+
+      sortedDates.forEach(date => {
         const dateSection = document.createElement('div');
         dateSection.style.marginBottom = '20px';
         const dateHeader = document.createElement('h3');
@@ -569,7 +903,6 @@
             try {
               const values = JSON.parse(saved);
               if (Array.isArray(values) && values.length > 0) {
-                hasData = true;
                 const item = document.createElement('div');
                 item.className = 'stat-item';
                 item.innerHTML = `<strong>${categoryConfig[cat].title}：</strong> ${values.join('、')}`;
@@ -581,36 +914,111 @@
           }
         });
 
-        if (hasData) {
-          container.appendChild(dateSection);
-        }
+        container.appendChild(dateSection);
       });
 
-      if (container.innerHTML === '') {
-        container.innerHTML = '<div class="no-data">暂无记录</div>';
+      const recentDays = currentPeriod === 'today' ? 1 :
+                        currentPeriod === 'yesterday' ? 1 :
+                        currentPeriod === 'week' ? 7 :
+                        currentPeriod === 'month' ? 30 : 7;
+
+      const now = new Date();
+      const cutoffDate = new Date(now);
+      cutoffDate.setDate(now.getDate() - recentDays + 1);
+      const cutoffStr = formatDate(cutoffDate);
+
+      const recentRecords = allSelected.filter(r => r.date >= cutoffStr);
+
+      if (recentRecords.length > 0) {
+        const bodyCount = {};
+        recentRecords
+          .filter(r => r.category === 'body' && r.value !== '感觉不错！')
+          .forEach(r => {
+            bodyCount[r.value] = (bodyCount[r.value] || 0) + 1;
+          });
+
+        let frequentBodyIssue = null;
+        for (const [issue, count] of Object.entries(bodyCount)) {
+          if (count >= 2 && !frequentBodyIssue) {
+            frequentBodyIssue = issue;
+            break;
+          }
+        }
+
+        const sleepIssues = ['失眠了', '早醒了', '中途醒了', '做噩梦了', '深睡少'];
+        const sleepCount = {};
+        recentRecords
+          .filter(r => r.category === 'sleep' && sleepIssues.includes(r.value))
+          .forEach(r => {
+            sleepCount[r.value] = (sleepCount[r.value] || 0) + 1;
+          });
+
+        let frequentSleepIssue = null;
+        for (const [issue, count] of Object.entries(sleepCount)) {
+          if (count >= 2 && !frequentSleepIssue) {
+            frequentSleepIssue = issue;
+            break;
+          }
+        }
+
+        let tipText = '';
+        if (frequentBodyIssue) {
+          const tips = {
+            '肩颈不适': '记得每隔一小时轻轻转一转脖子，或做个简单的拉伸～',
+            '头痛头晕': '可以试试闭眼深呼吸几次，让大脑休息一下。',
+            '眼睛干涩': '看看远处的绿植，给眼睛几分钟放松时间吧。',
+            '压力过大': '允许自己暂停一下，什么都不做也是在照顾自己。',
+            '疲惫乏力': '最近容易累，记得累了就歇会儿，不用追求完美。',
+            '胸闷气短': '呼吸不太顺畅时，试试放慢节奏，多做几次深呼吸。',
+            // 修改：新增腹部不适提示（合并原腹痛/腹胀）
+            '腹部不适': '腹部偶尔不适，注意饮食清淡，饭后慢慢走一走帮助消化。',
+          };
+          const defaultTip = '要记得多关注一下身体的感受哦。';
+          tipText += `你最近常提到“${frequentBodyIssue}”，${tips[frequentBodyIssue] || defaultTip}`;
+        } else if (frequentSleepIssue) {
+          const tips = {
+            '失眠了': '睡前可以试试听点轻音乐，或写几行日记清空思绪。',
+            '早醒了': '醒来后不用急着起床，闭眼放松也是休息。',
+            '中途醒了': '夜里醒来很正常，深呼吸几次，慢慢回到睡眠中。'
+          };
+          const defaultTip = '睡眠在慢慢调整中，给自己多一点耐心。';
+          tipText += `你最近常提到“${frequentSleepIssue}”，${tips[frequentSleepIssue] || defaultTip}`;
+        } else if (recentRecords.some(r => r.category === 'body' && r.value === '感觉不错！')) {
+          tipText = '最近身体状态不错，继续保持这份觉察和温柔吧！';
+        }
+
+        if (tipText) {
+          const tipEl = document.createElement('div');
+          tipEl.style.marginTop = '24px';
+          tipEl.style.padding = '12px';
+          tipEl.style.backgroundColor = '#e8f5e9';
+          tipEl.style.borderRadius = '12px';
+          tipEl.style.color = '#2e7d32';
+          tipEl.style.fontSize = '0.95rem';
+          tipEl.style.borderLeft = '3px solid #4caf50';
+          tipEl.textContent = tipText;
+          container.appendChild(tipEl);
+        }
       }
     }
 
     function renderCountStats(container) {
-      // 收集所有选项及其出现次数
       const counter = {};
 
-      // 初始化所有可能选项为 0（可选，也可动态统计）
-     const allOptions = {
-  sleep: ['睡得很好', '失眠了', '早醒了', '中途醒了', '做噩梦了', '深睡少'],
-  food: ['吃得正好', '没按时吃', '没吃饱', '吃撑了', '生冷油腻'],
-  activity: ['运动了', '散步了', '拉伸了', '轻度活动', '需要休息', '晒太阳'],
-  body: ['感觉不错！', '眼睛干涩', '鼻塞不通', '咳嗽不适', '肩颈不适', '腰背酸痛', '腿部沉重', '头痛头晕', '压力过大']
-};
+      const allOptions = {
+        sleep: ['睡得很好', '失眠了', '早醒了', '中途醒了', '做噩梦了', '深睡少'],
+        food: ['吃得正好', '没按时吃', '没吃饱', '吃撑了', '辛辣生冷油腻'],
+        activity: ['运动了', '散步了', '拉伸了', '轻度活动', '需要休息', '晒太阳'],
+        // 修改：body数组中替换腹部不适（删除腹痛/腹胀，新增腹部不适）
+        body: ['感觉不错！', '疲惫乏力', '头痛头晕', '眼睛干涩', '鼻塞不通', '咳嗽不适', '胸闷气短', '肩颈不适', '腰背酸痛', '腹部不适', '腿部沉重', '压力过大']
+      };
 
-      // 初始化计数器
       Object.keys(allOptions).forEach(cat => {
         allOptions[cat].forEach(opt => {
           counter[opt] = 0;
         });
       });
 
-      // 遍历所有 localStorage 中的相关数据
       const dates = getAllDates();
       dates.forEach(date => {
         ['sleep', 'food', 'activity', 'body'].forEach(cat => {
@@ -624,7 +1032,6 @@
                   if (counter.hasOwnProperty(val)) {
                     counter[val]++;
                   } else {
-                    // 如果有新选项（未来扩展），也计入
                     counter[val] = (counter[val] || 0) + 1;
                   }
                 });
@@ -636,21 +1043,19 @@
         });
       });
 
-      // 计算趋势（最近一周 vs 更早一周）
       const trendData = calculateTrends(dates, allOptions);
 
-      // 按类别分组显示
       let hasData = false;
       Object.entries(categoryConfig).forEach(([cat, config]) => {
         const items = allOptions[cat].map(opt => {
           const count = counter[opt] || 0;
-          let trend = '➡️'; // 默认持平
+          let trend = '➡️'; // 默认无趋势
           if (trendData[opt] !== undefined) {
-            if (trendData[opt] > 0) trend = '📈'; // 上升
-            else if (trendData[opt] < 0) trend = '📉'; // 下降
+            if (trendData[opt] > 0) trend = '🌱'; // 只用一个符号表示变化
+            else if (trendData[opt] < 0) trend = '🌱';
           }
           return { option: opt, count: count, trend: trend };
-        }).filter(item => item.count > 0).sort((a, b) => b.count - a.count); // 高频在前
+        }).filter(item => item.count > 0).sort((a, b) => b.count - a.count);
 
         if (items.length > 0) {
           hasData = true;
@@ -679,36 +1084,32 @@
       }
     }
 
-    // 获取所有已存储的日期键
     function getAllDates() {
       const dates = new Set();
       for (let key in localStorage) {
         if (key.startsWith('haohao_')) {
           const parts = key.split('_');
           if (parts.length >= 3) {
-            const date = parts[2] + '-' + parts[3] + '-' + parts[4]; // 重新组装日期
+            const date = parts.slice(2).join('-');
             if (/^\d{4}-\d{2}-\d{2}$/.test(date)) {
               dates.add(date);
             }
           }
         }
       }
-      return Array.from(dates).sort((a, b) => new Date(a) - new Date(b)); // 从旧到新排序
+      return Array.from(dates).sort((a, b) => new Date(a) - new Date(b));
     }
 
-    // 计算趋势：最近一周 vs 上一周
     function calculateTrends(dates, allOptions) {
       const now = new Date();
       const oneWeekAgo = new Date(now);
       oneWeekAgo.setDate(now.getDate() - 7);
-
       const twoWeeksAgo = new Date(now);
       twoWeeksAgo.setDate(now.getDate() - 14);
 
       const recentCounter = {};
       const previousCounter = {};
 
-      // 初始化计数器
       Object.keys(allOptions).forEach(cat => {
         allOptions[cat].forEach(opt => {
           recentCounter[opt] = 0;
@@ -753,7 +1154,7 @@
         allOptions[cat].forEach(opt => {
           const recent = recentCounter[opt] || 0;
           const previous = previousCounter[opt] || 0;
-          trendMap[opt] = recent - previous; // 正数表示上升，负数表示下降
+          trendMap[opt] = recent - previous;
         });
       });
 
